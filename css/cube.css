@@ -1,0 +1,32 @@
+/* PELAGIC — mk5 etch cube.
+   The rig is built at mk5's exact geometry — a 300px scene, perspective 900px,
+   faces 300px at translateZ(150px) — and then scaled to fit the rail slot by a
+   plain 2D transform on .cube-scale, which sits OUTSIDE the perspective and so
+   cannot change the projection. Rebuilding the rig at the slot's pixel size
+   instead is what made the earlier port look wrong. */
+
+.cube-host{
+  /* NO --cs default here. cube.js treats "is --cs set?" as "has the rail been
+     measured?", so declaring a fallback on the host made getComputedStyle
+     always return a value, the gate always pass, and the rig paint at 150px
+     from the first act-3 frame — then jump to the rail size 700ms later at
+     MOUNT. The property is written by main.js sizeCubeInRail() and nowhere
+     else. */
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+/* Hidden until js/cube.js has read --cs from the slot. Without this the rig
+   paints one frame at its unscaled 300px default, which read as the cube
+   jumping in from outside its box. */
+.cube-scale{transform-origin:50% 50%;will-change:transform;opacity:0;
+  transition:opacity .25s ease}
+.cube-scene{width:300px;height:300px;perspective:900px}
+.cube3{width:100%;height:100%;position:relative;transform-style:preserve-3d;will-change:transform}
+.cface3{
+  position:absolute;width:300px;height:300px;
+  background:#020406;
+  border:1px solid rgba(0,240,255,.35);
+  box-sizing:border-box;
+}
+.cface3 canvas{width:100%;height:100%;display:block}

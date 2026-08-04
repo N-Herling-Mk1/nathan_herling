@@ -1,0 +1,5 @@
+slot,label,kind,target,status,notes
+1,CV,pdf,assets/cv/NHerling_CV_2026.pdf,live,"embedded viewer + download button; the pdf itself is your file, not shipped in this drop"
+2,Research,page,,live,ATLAS Run-3 LLP displaced-vertex search; two manuscripts in preparation
+3,Projects,page,,live,"ordering principle: instrumentation and hardware first, software tooling under it"
+4,Mathematics,page,,live,folded plane and the root-geometry bound; framed as intended for publication

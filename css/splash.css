@@ -1,0 +1,199 @@
+/* ============ ACT 1 — SPLASH ============
+   Replaces the CRT tube. Everything on this page is present at t=0: no fade
+   in, no chroma split, no sheen. The only motion before the press is ambient
+   (band cells, source orb) and the proximity ramp that charges the page as the
+   pointer closes on the entry button.
+
+   The signature is NOT here at load. It is cut, in pen order, when the button
+   is struck — see js/splash.js. */
+
+#stage{position:fixed;inset:0;z-index:5;transition:opacity .45s ease}
+#stage.gone{opacity:0;pointer-events:none}
+
+#splash-canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* ---- centre column: name over the entry button ---- */
+#splash-centre{
+  position:absolute;inset:0;z-index:2;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  pointer-events:none;padding-bottom:8vh;
+}
+
+#sitename{
+  font-family:var(--display);font-weight:600;
+  letter-spacing:.22em;font-size:clamp(24px,4.6vw,62px);
+  color:#ff4a3d;text-transform:lowercase;white-space:nowrap;
+  margin:0 0 clamp(34px,7vh,86px);transform:translateY(-2vh);
+  /* No text-shadow: the visible layer is the canvas plate drawn by
+     js/nameglitch.js, and the plate is deliberately crisp. A shadow here would
+     paint a soft copy underneath the sharp one. */
+}
+
+/* The entry button is the key UI on this page, so it is present from the
+   first frame and its chrome is painted per-frame from the power level
+   rather than transitioned by CSS. */
+#enterBtn{
+  pointer-events:auto;position:relative;
+  font-family:var(--display);font-weight:800;
+  letter-spacing:.28em;font-size:clamp(11px,1.35vw,17px);
+  text-transform:uppercase;color:#ffd9d2;
+  background:linear-gradient(180deg, rgba(200,32,42,.16), rgba(120,10,16,.28));
+  border:1px solid rgba(255,74,61,.75);border-radius:2px;
+  padding:18px 42px;cursor:pointer;outline:none;transition:none;
+}
+#enterBtn::before,#enterBtn::after{
+  content:'';position:absolute;top:-1px;bottom:-1px;width:9px;
+  border:1px solid rgba(255,74,61,.75);
+}
+#enterBtn::before{left:-1px;border-right:none}
+#enterBtn::after{right:-1px;border-left:none}
+#enterBtn:focus-visible{box-shadow:0 0 0 2px var(--cyan);outline:none}
+#enterBtn:disabled{opacity:1;cursor:default}
+
+/* ---- power module, top left ---- */
+#power{
+  position:absolute;top:26px;left:26px;z-index:3;width:262px;
+  border:1px solid rgba(0,200,240,.35);background:rgba(0,26,36,.55);
+  padding:10px 12px 12px;pointer-events:none;
+}
+#power .head{
+  display:flex;align-items:center;gap:8px;
+  font-family:var(--display);font-size:9.5px;font-weight:600;
+  letter-spacing:.26em;color:#00e6ff;
+  padding-bottom:8px;margin-bottom:10px;
+  border-bottom:1px solid rgba(0,200,240,.18);
+}
+#power .head .dot{width:6px;height:6px;background:#00e6ff;box-shadow:0 0 8px #00e6ff}
+#power .row{display:flex;align-items:center;gap:10px}
+
+/* Every width in the readout is fixed. The charge value climbs 50 -> 100
+   while the page charges, and a fluid layout would reflow the whole module
+   on the digit change. */
+#battery{
+  position:relative;width:108px;flex:0 0 108px;height:34px;
+  border:2px solid rgba(0,220,255,.8);border-radius:3px;
+  padding:3px;display:flex;gap:3px;
+}
+#battery::after{
+  content:'';position:absolute;right:-8px;top:50%;transform:translateY(-50%);
+  width:6px;height:14px;background:rgba(0,220,255,.8);border-radius:0 2px 2px 0;
+}
+#battery .cell{flex:1;background:rgba(43,255,158,.06)}
+#battery .cell.on{background:#2bff9e;box-shadow:inset 0 0 10px rgba(43,255,158,.55)}
+#battery .cell.part{background:linear-gradient(90deg,#2bff9e var(--f),rgba(43,255,158,.06) var(--f))}
+
+#gauge{
+  width:120px;flex:0 0 120px;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  height:34px;border:2px solid rgba(0,220,255,.8);border-radius:17px;padding:0 9px;
+}
+#gauge .lbl{font-size:9.5px;letter-spacing:.1em;color:rgba(0,180,220,.75);flex:none}
+#gauge .bar{width:2px;height:17px;background:rgba(0,220,255,.6);flex:none}
+#gauge .val{
+  font-family:var(--display);font-weight:800;font-size:16px;color:#eafcff;
+  width:36px;flex:0 0 36px;text-align:right;
+  font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1;
+}
+#gauge .pct{font-size:9.5px;color:rgba(0,180,220,.75);align-self:flex-end;padding-bottom:3px;flex:none}
+
+#power .mods{display:flex;gap:10px;margin-top:11px}
+#power .mod{display:flex;flex-direction:column;gap:5px}
+#power .mod canvas{display:block;border:1px solid rgba(0,200,240,.22);background:#000}
+#power .mod .cap{font-size:8.5px;letter-spacing:.2em;color:rgba(0,180,220,.75);text-align:center}
+#power .mod .cap span{color:#00e6ff}
+
+/* ---- the press: wipe out to act 2 ---- */
+#splash-wipe{
+  position:absolute;inset:0 100% 0 0;z-index:6;background:#000;
+  border-right:2px solid #ff4a3d;box-shadow:0 0 34px rgba(255,74,61,.75);
+  display:none;pointer-events:none;
+}
+
+@media (max-width:640px){
+  #power{width:224px;top:16px;left:14px;padding:9px 10px 10px}
+  #power .row{gap:8px}
+  #battery{width:88px;flex:0 0 88px;height:28px}
+  #gauge{width:106px;flex:0 0 106px;height:28px;gap:5px;padding:0 7px}
+  #gauge .val{font-size:14px;width:31px;flex:0 0 31px}
+  #power .mod canvas{width:96px;height:78px}
+  #enterBtn{padding:15px 26px}
+  #sndToggle{width:52px;height:52px;top:16px;right:14px}
+  #sndToggle svg{width:30px;height:30px}
+}
+
+/* ---- sound toggle ----
+   Sits top-right in the POWER SOURCE header. Its real job is to be something
+   worth clicking: browsers will not let audio sound until the visitor has
+   actually interacted, and pointer movement does not count. Clicking this
+   grants that interaction. It starts OFF so it reads as an invitation. */
+#sndToggle{
+  position:absolute;top:26px;right:26px;z-index:4;
+  width:64px;height:64px;padding:0;
+  background:rgba(0,26,36,.6);border:1px solid rgba(0,200,240,.30);border-radius:3px;
+  color:#00e6ff;cursor:pointer;pointer-events:auto;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color .2s ease, box-shadow .2s ease;
+}
+#sndToggle svg{width:38px;height:38px;overflow:visible}
+#sndToggle .spk{fill:currentColor;stroke:none}
+#sndToggle .w1,#sndToggle .w2,#sndToggle .w3,#sndToggle .off{
+  fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+
+/* off: muted colour, waves hidden, slash shown */
+#sndToggle[aria-pressed="false"]{color:rgba(0,215,250,.92);border-color:rgba(0,220,255,.55)}
+#sndToggle[aria-pressed="false"] .w1,
+#sndToggle[aria-pressed="false"] .w2,
+#sndToggle[aria-pressed="false"] .w3{opacity:0}
+#sndToggle[aria-pressed="true"] .off{opacity:0}
+
+/* on: lit, matching the rest of the module */
+#sndToggle[aria-pressed="true"]{
+  color:#00e6ff;border-color:rgba(0,220,255,.75);
+  box-shadow:0 0 10px rgba(0,220,255,.35);
+}
+#sndToggle:hover{border-color:rgba(0,220,255,.8)}
+#sndToggle:focus-visible{outline:none;box-shadow:0 0 0 2px var(--cyan)}
+
+/* while it is off and untouched, a slow breath draws the eye to it */
+@keyframes snd-invite{
+  0%,100%{opacity:.72;box-shadow:0 0 0 rgba(0,220,255,0)}
+  50%    {opacity:1;  box-shadow:0 0 14px rgba(0,220,255,.45)}
+}
+#sndToggle[aria-pressed="false"]{animation:snd-invite 2.6s ease-in-out infinite}
+
+/* ══ URL plate ══════════════════════════════════════════════════════════
+   The name is drawn to a canvas by js/nameglitch.js so it can be sheared per
+   scanline. The h1 keeps the text for screen readers and for selection, but
+   is not painted — the canvas is the visible layer. */
+#sitename{position:relative;color:transparent}
+#sitename canvas.name-plate{
+  position:absolute;pointer-events:none;
+}
+@media (prefers-reduced-motion:reduce){
+  #sitename{color:#ff4a3d}
+  #sitename canvas.name-plate{display:none}
+}
+
+/* ---- fuse blow ----
+   The corner brackets are the only part of the button that is pure CSS, so the
+   snap lives here. They kick outward and fade in one 260ms step — no return, no
+   ease-in-out: the bracket is leaving, not bouncing. */
+#enterBtn.blown{cursor:default}
+#enterBtn.blown::before{animation:bracket-snap-l .26s ease-out forwards}
+#enterBtn.blown::after {animation:bracket-snap-r .26s ease-out forwards}
+
+@keyframes bracket-snap-l{
+  0%  {transform:translateX(0)      rotate(0);   opacity:1}
+  18% {transform:translateX(-3px)   rotate(-2deg);opacity:1}
+  100%{transform:translateX(-26px)  rotate(-13deg);opacity:0}
+}
+@keyframes bracket-snap-r{
+  0%  {transform:translateX(0)      rotate(0);   opacity:1}
+  18% {transform:translateX(3px)    rotate(2deg); opacity:1}
+  100%{transform:translateX(26px)   rotate(13deg);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){
+  #enterBtn.blown::before,#enterBtn.blown::after{animation:none;opacity:0}
+}

@@ -1,0 +1,109 @@
+<!-- NOTE (splash mk2): assets/og/*.png are no longer produced by this file.
+     The shipped cards are cut from the mk2 splash art — see DROP_NOTES.md.
+     This renderer is kept because it still regenerates a card from live DOM if
+     the art ever needs to be rebuilt from scratch. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>og card renderer</title>
+<link rel="stylesheet" href="../css/fonts.css">
+<style>
+  html,body{margin:0;padding:0;background:#111}
+  #card{display:block}
+</style>
+</head>
+<body>
+<!-- Renders the social card from the site's OWN signature vectors and palette,
+     so the card cannot drift from the identity placard it is based on.
+     Size and variant come from the query string:
+       ?w=1200&h=630   default, Open Graph / Twitter summary_large_image
+       ?w=1200&h=1200  square, for platforms that crop to 1:1 -->
+<canvas id="card"></canvas>
+<script type="module">
+import { CFG, pal } from '../js/config.js';
+import * as sig from '../js/signature.js';
+
+const q = new URLSearchParams(location.search);
+const W = +(q.get('w') || 1200), H = +(q.get('h') || 630);
+const square = H / W > 0.8;
+
+const c = document.getElementById('card');
+c.width = W; c.height = H;
+const x = c.getContext('2d');
+
+// signature.js resolves its default path against the DOCUMENT, and this page
+// lives in /tools/, so the path has to be given explicitly
+await sig.load('../assets/data/signature.json');
+await document.fonts.ready;
+
+const P = pal();
+
+// ---- bed ----
+x.fillStyle = '#04070b';
+x.fillRect(0, 0, W, H);
+let g = x.createRadialGradient(W * 0.32, H * -0.15, 0, W * 0.32, H * -0.15, W * 0.9);
+g.addColorStop(0, 'rgba(31,143,196,0.13)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+x.fillStyle = g; x.fillRect(0, 0, W, H);
+g = x.createRadialGradient(W * 1.05, H * 1.2, 0, W * 1.05, H * 1.2, W * 0.75);
+g.addColorStop(0, 'rgba(224,0,16,0.10)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+x.fillStyle = g; x.fillRect(0, 0, W, H);
+
+// ---- engineering grid, masked toward the centre like the site's grid bed ----
+x.save();
+const cell = Math.round(W / 26);
+x.strokeStyle = 'rgba(79,214,255,0.075)'; x.lineWidth = 1;
+for (let i = 0; i <= W; i += cell) { x.beginPath(); x.moveTo(i + .5, 0); x.lineTo(i + .5, H); x.stroke(); }
+for (let i = 0; i <= H; i += cell) { x.beginPath(); x.moveTo(0, i + .5); x.lineTo(W, i + .5); x.stroke(); }
+x.restore();
+
+// ---- signature, drawn from the same vector data the site uses ----
+const sigCy = square ? H * 0.40 : H * 0.395;
+sig.draw(x, W * 0.5, sigCy, W * (square ? 0.80 : 0.72), {
+  color: CFG.ink.sig, width: Math.max(3, W * 0.0046),
+  glow: CFG.ink.sigGlow, blur: Math.round(W * 0.022)
+});
+
+// ---- the domain, in the beam palette ----
+const fs = Math.round(W * (square ? 0.070 : 0.062));
+const dy = square ? H * 0.615 : H * 0.615;
+x.font = '400 ' + fs + "px 'Share Tech Mono', monospace";
+x.textAlign = 'center'; x.textBaseline = 'middle';
+try { x.letterSpacing = Math.round(fs * 0.06) + 'px'; } catch (e) {}
+x.shadowColor = P.glow; x.shadowBlur = Math.round(fs * 0.9);
+x.fillStyle = P.hot; x.fillText(CFG.domain, W * 0.5, dy);
+x.shadowBlur = Math.round(fs * 0.3);
+x.fillText(CFG.domain, W * 0.5, dy);
+x.shadowBlur = 0;
+
+// ---- strapline ----
+const ss = Math.round(W * 0.0175);
+x.font = '700 ' + ss + "px 'Orbitron', sans-serif";
+try { x.letterSpacing = Math.round(ss * 0.42) + 'px'; } catch (e) {}
+x.fillStyle = 'rgba(63,110,134,0.95)';
+x.fillText('PHYSICS  ·  DATA SCIENCE  ·  INSTRUMENTATION', W * 0.5, H * (square ? 0.72 : 0.755));
+try { x.letterSpacing = '0px'; } catch (e) {}
+
+// ---- frame + corner ticks, matching the panel chrome ----
+const m = Math.round(W * 0.028), t = Math.round(W * 0.032);
+x.strokeStyle = 'rgba(79,214,255,0.20)'; x.lineWidth = 2;
+x.strokeRect(m + .5, m + .5, W - m * 2, H - m * 2);
+x.strokeStyle = 'rgba(79,214,255,0.55)'; x.lineWidth = 3;
+for (const [cx, cy, sx, sy] of [[m, m, 1, 1], [W - m, m, -1, 1], [m, H - m, 1, -1], [W - m, H - m, -1, -1]]) {
+  x.beginPath();
+  x.moveTo(cx + sx * t, cy); x.lineTo(cx, cy); x.lineTo(cx, cy + sy * t);
+  x.stroke();
+}
+
+// ---- scanlines + vignette, last ----
+x.globalAlpha = 0.26; x.fillStyle = '#000';
+for (let y = 0; y < H; y += 3) x.fillRect(0, y, W, 1);
+x.globalAlpha = 1;
+g = x.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.22, W / 2, H / 2, Math.max(W, H) * 0.72);
+g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.62)');
+x.fillStyle = g; x.fillRect(0, 0, W, H);
+
+document.body.dataset.ready = '1';
+</script>
+</body>
+</html>

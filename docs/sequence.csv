@@ -1,0 +1,16 @@
+act,beat,ms,what
+1,WARM,500,dead tube; static only
+1,RESOLVE,4000,signature resolves block 46 to 3 and chroma 27 to 5; PELAGIC fades up inside the tube
+1,ETCH_URL,1800,laser carves nathanherling.com under the signature
+1,ETCH_ENTER,4800,laser carves the press-to-enter button: border then scratch infill then text
+1,READY,0,button live and breathing; waits for the user
+2,WIPE,420,bright horizontal band sweeps the tube
+2,TYPE,1300,shell revealed; init command types itself with keystroke sfx
+2,EXEC,250,enter thunk
+3,FRAME,900,rail and top-panel rules draw in; shell drifts to rail slot L2
+3,MOUNT,700,PELAGIC re-mounts into rail slot L1
+3,PLACARD,700,rail slot L3 lights with the signature over the url
+3,DECK,1100,flat disc rakes up into the 3D deck in the main area
+3,PRINT,1400,centre printer lays 4 placards onto the deck faces
+3,CARDS,700,the 4 top-panel cards deal in
+3,LIVE,500,controls hand over to the user

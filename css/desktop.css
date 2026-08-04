@@ -1,0 +1,43 @@
+/* right half: hover panels above a rotating placard desktop */
+#right{position:fixed;right:0;top:0;width:58vw;height:100%;z-index:12;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:26px;opacity:0;pointer-events:none;transition:opacity .7s ease}
+#right.live{opacity:1;pointer-events:auto}
+#panels{display:flex;gap:10px}
+.pbtn{min-width:118px;text-align:left;padding:10px 13px;border:1px solid var(--line);
+  background:rgba(7,13,20,.72);backdrop-filter:blur(6px);cursor:pointer}
+.pbtn .l{display:block;font-family:var(--display);font-weight:700;font-size:12px;
+  letter-spacing:.12em;color:var(--ink)}
+.pbtn .b{display:block;font-size:10px;color:var(--ink-dim);text-transform:none;letter-spacing:.04em}
+.pbtn[aria-current="true"]{border-color:var(--cyan)}
+.pbtn[aria-current="true"] .l{color:var(--cyan)}
+
+#desk-wrap{position:relative;width:min(46vw,560px);height:min(34vw,360px);
+  perspective:1200px;touch-action:none;cursor:grab}
+#desk-wrap.grabbing{cursor:grabbing}
+#desk{position:absolute;left:50%;top:50%;width:0;height:0;transform-style:preserve-3d;
+  transition:transform .12s linear}
+#desk.snapping{transition:transform .55s cubic-bezier(.3,0,.15,1)}
+.placard{position:absolute;width:190px;height:118px;margin:-59px 0 0 -95px;
+  border:1px solid var(--line);background:rgba(7,13,20,.82);
+  box-shadow:0 0 18px rgba(79,214,255,.14), inset 0 0 22px rgba(0,0,0,.6);
+  display:flex;flex-direction:column;justify-content:flex-end;padding:12px;
+  opacity:0;transition:opacity .4s ease}
+.placard.printed{opacity:1}
+.placard .l{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.12em;color:var(--ink)}
+.placard .b{font-size:10px;color:var(--ink-dim);margin-top:3px}
+.placard.face{border-color:var(--cyan);box-shadow:0 0 26px rgba(79,214,255,.30), inset 0 0 22px rgba(0,0,0,.6)}
+/* the printer: a sphere at the centre of the desk */
+#printer{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;
+  border-radius:50%;background:radial-gradient(circle at 38% 34%, #eaf9ff, #4fd6ff 42%, #10475e 100%);
+  box-shadow:0 0 22px rgba(79,214,255,.75), 0 0 60px rgba(79,214,255,.28);
+  transform:translateZ(0);opacity:0;transition:opacity .5s ease}
+#printer.on{opacity:1}
+#spin{display:flex;gap:8px;align-items:center}
+#open{position:fixed;right:2vw;bottom:2vh;width:54vw;max-height:46vh;overflow:auto;
+  border:1px solid var(--line);background:rgba(7,13,20,.94);backdrop-filter:blur(8px);
+  padding:18px;z-index:22;display:none}
+#open.on{display:block}
+#open h2{font-family:var(--display);font-size:13px;letter-spacing:.2em;color:var(--amber);margin-bottom:10px}
+#open .body{font-size:12px;line-height:1.6;color:var(--ink)}
+#open a{color:var(--cyan)}

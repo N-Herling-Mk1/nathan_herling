@@ -1,0 +1,115 @@
+/* ============ ACTS 3 + 4 — the desk ============
+   Three regions. The rail is full height on the left; the top panel and the
+   main area stack to its right.
+
+     +----------+---------------------------------+
+     |  RAIL    |  TOP PANEL                      |
+     |  L1 cube +---------------------------------+
+     |  L2 shell|                                 |
+     |  L3 sig  |          MAIN AREA              |
+     |  L4 dock |                                 |
+     +----------+---------------------------------+ */
+
+#desk{position:fixed;inset:0;z-index:10;
+  display:grid;gap:var(--gap);padding:var(--gap);
+  grid-template-columns:var(--rail) minmax(0,1fr);
+  grid-template-rows:var(--toph) minmax(0,1fr);
+  opacity:0;pointer-events:none}
+#desk.on{opacity:1;pointer-events:auto}
+
+/* ---- rail ---- */
+#rail{grid-area:1 / 1 / 3 / 2;display:grid;gap:var(--gap);min-height:0;
+  grid-template-rows:minmax(120px,.92fr) minmax(0,1.75fr) minmax(78px,.62fr) minmax(110px,.95fr)}
+
+.slot{position:relative;min-height:0;border:1px solid var(--line-soft);
+  background:linear-gradient(180deg, rgba(79,214,255,.035), transparent 40%), rgba(7,13,20,.55);
+  opacity:0;transform:translateX(-14px);
+  transition:opacity .6s ease, transform .6s cubic-bezier(.22,.61,.36,1),
+             border-color .3s ease}
+#desk.framed .slot{opacity:1;transform:none}
+#rail .slot:nth-child(1){transition-delay:.00s}
+#rail .slot:nth-child(2){transition-delay:.06s}
+#rail .slot:nth-child(3){transition-delay:.12s}
+#rail .slot:nth-child(4){transition-delay:.18s}
+
+/* corner ticks — the rail reads as machined rather than as a card */
+.slot::before,.slot::after{content:"";position:absolute;width:9px;height:9px;
+  border:1px solid var(--line);pointer-events:none}
+.slot::before{left:-1px;top:-1px;border-right:0;border-bottom:0}
+.slot::after{right:-1px;bottom:-1px;border-left:0;border-top:0}
+
+.slot-tag{position:absolute;left:9px;top:7px;z-index:3;
+  font-size:8.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-faint)}
+
+#slot-cube{display:flex;align-items:center;justify-content:center}
+#slot-term{overflow:hidden}
+#slot-sig{padding:8px 10px 6px}
+#sig-canvas{width:100%;height:100%;display:block}
+#slot-dock{display:flex;align-items:center;justify-content:center}
+#slot-dock .empty{font-size:9px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--ink-faint);transition:opacity .4s ease}
+#slot-dock.filled{border-color:var(--line)}
+#slot-dock.filled .empty{opacity:0}
+
+/* The dock reads "empty", which says nothing about how to fill it. Once a face
+   is settled and openable the slot carries the instruction instead. */
+#slot-dock .dock-hint{
+  position:absolute;left:12px;right:12px;top:50%;transform:translateY(-50%);
+  font-size:10px;line-height:1.5;letter-spacing:.14em;text-align:center;
+  text-transform:uppercase;color:var(--amber);
+  text-shadow:0 0 10px rgba(255,140,50,.45);
+  opacity:0;transition:opacity .35s ease;pointer-events:none}
+#slot-dock.hint .dock-hint{opacity:.92}
+#slot-dock.hint .empty{opacity:0}
+#slot-dock.filled .dock-hint{opacity:0}
+
+/* ---- top panel ---- */
+#top{grid-area:1 / 2 / 2 / 3;display:grid;gap:var(--gap);min-width:0;
+  grid-template-columns:repeat(4, minmax(0,1fr))}
+
+.card{position:relative;text-align:left;padding:11px 13px;min-width:0;
+  border:1px solid var(--line-soft);background:rgba(7,13,20,.62);
+  backdrop-filter:blur(6px);cursor:pointer;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:center;gap:3px;
+  text-transform:none;letter-spacing:normal;
+  opacity:0;transform:translateY(-10px);
+  transition:opacity .45s ease, transform .45s cubic-bezier(.22,.61,.36,1),
+             border-color .2s ease, background .2s ease}
+#desk.dealt .card{opacity:1;transform:none}
+#top .card:nth-child(1){transition-delay:.00s}
+#top .card:nth-child(2){transition-delay:.07s}
+#top .card:nth-child(3){transition-delay:.14s}
+#top .card:nth-child(4){transition-delay:.21s}
+
+.card .n{font-size:8.5px;letter-spacing:.3em;color:var(--ink-faint)}
+.card .l{font-family:var(--display);font-weight:700;font-size:13px;
+  letter-spacing:.12em;color:var(--ink);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.card .b{font-size:10px;color:var(--ink-dim);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.card:hover:not(:disabled){border-color:var(--cyan);background:rgba(11,23,33,.8)}
+.card[aria-current="true"]{border-color:var(--cyan)}
+.card[aria-current="true"] .l{color:var(--cyan)}
+/* the selected card grows a tick pointing down at the deck */
+.card[aria-current="true"]::after{content:"";position:absolute;left:0;bottom:0;
+  width:100%;height:2px;background:var(--cyan);box-shadow:var(--glow-cyan)}
+
+/* ---- main area ---- */
+#main{grid-area:2 / 2 / 3 / 3;position:relative;min-width:0;min-height:0;
+  border:1px solid var(--line-soft);
+  background:radial-gradient(120% 90% at 50% 110%, rgba(31,143,196,.07), transparent 60%),
+             rgba(4,7,11,.5)}
+#main::before,#main::after{content:"";position:absolute;width:11px;height:11px;
+  border:1px solid var(--line);pointer-events:none}
+#main::before{left:-1px;top:-1px;border-right:0;border-bottom:0}
+#main::after{right:-1px;bottom:-1px;border-left:0;border-top:0}
+
+@media (max-width:860px){
+  #desk{grid-template-columns:minmax(0,1fr);
+        grid-template-rows:var(--toph) minmax(0,1fr) auto}
+  #rail{grid-area:3 / 1 / 4 / 2;grid-template-rows:none;
+        grid-template-columns:repeat(4,minmax(0,1fr));height:132px}
+  #top{grid-area:1 / 1 / 2 / 2}
+  #main{grid-area:2 / 1 / 3 / 2}
+  .card .b{display:none}
+}

@@ -1,0 +1,194 @@
+/* ============ THE DECK ============
+   4 placards on a carousel, 90 deg apart. Grab to spin, toggle to step, or
+   click a top-panel card to swing a face flush to camera. Clicking a face
+   minimises the whole rig into rail slot L4 and opens the panel in #main.
+
+   The stage is position:fixed and its box is driven from JS so it can drift
+   between the main area and the dock slot without reparenting. */
+
+#deck-stage{position:fixed;z-index:14;perspective:1400px;touch-action:none;
+  opacity:0;pointer-events:none;
+  will-change:left,top,width,height;
+  transition:left .85s cubic-bezier(.36,.05,.16,1),
+             top .85s cubic-bezier(.36,.05,.16,1),
+             width .85s cubic-bezier(.36,.05,.16,1),
+             height .85s cubic-bezier(.36,.05,.16,1),
+             opacity .5s ease}
+#deck-stage.on{opacity:1;pointer-events:auto;cursor:grab}
+#deck-stage.grabbing{cursor:grabbing}
+#deck-stage.mini{z-index:16}
+
+#deck{position:absolute;left:50%;top:50%;width:0;height:0;
+  transform-style:preserve-3d;will-change:transform}
+
+.placard{position:absolute;left:0;top:0;
+  width:var(--pw,200px);height:var(--ph,126px);
+  margin:calc(var(--ph,126px) / -2) 0 0 calc(var(--pw,200px) / -2);
+  border:1px solid var(--line);background:rgba(7,13,20,.86);
+  box-shadow:0 0 18px rgba(79,214,255,.14), inset 0 0 26px rgba(0,0,0,.62);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:calc(var(--pw,200px) * .06);cursor:pointer;
+  /* All four faces stay visible — that is the whole point of a carousel.
+     backface-visibility:hidden was tried here and is WRONG: the two side cards
+     sit at exactly +/-90deg, right on the backface threshold, so it culls them
+     too and you are left looking at one card.
+     The rear card overlapping the front card's centre was a HIT-TESTING
+     problem, not a visibility one, and it is solved below: only the card flush
+     to camera takes pointer events. */
+  pointer-events:none;
+  opacity:0;transition:opacity .4s ease, border-color .25s ease, box-shadow .25s ease}
+.placard.printed{opacity:1}
+.placard.face{pointer-events:auto}
+.placard .n{font-size:calc(var(--pw,200px) * .042);letter-spacing:.3em;color:var(--ink-faint)}
+.placard .l{font-family:var(--display);font-weight:700;
+  font-size:calc(var(--pw,200px) * .075);letter-spacing:.12em;color:var(--ink);margin-top:2px}
+.placard .b{font-size:calc(var(--pw,200px) * .05);color:var(--ink-dim);margin-top:3px}
+.placard.face{border-color:var(--cyan);pointer-events:auto;
+  box-shadow:0 0 30px rgba(79,214,255,.32), inset 0 0 26px rgba(0,0,0,.62)}
+.placard.face:hover{box-shadow:0 0 42px rgba(79,214,255,.46), inset 0 0 26px rgba(0,0,0,.62)}
+#deck-stage.mini .placard{cursor:default}
+#deck-stage.mini .placard .b,#deck-stage.mini .placard .n{display:none}
+
+/* the printer: a bright sphere at the deck centre that lays the placards down */
+#printer{position:absolute;left:50%;top:50%;width:32px;height:32px;
+  margin:-16px 0 0 -16px;border-radius:50%;
+  background:radial-gradient(circle at 38% 34%, #eaf9ff, #4fd6ff 42%, #10475e 100%);
+  box-shadow:0 0 22px rgba(79,214,255,.75), 0 0 60px rgba(79,214,255,.28);
+  opacity:0;transition:opacity .5s ease;pointer-events:none}
+#printer.on{opacity:1}
+
+/* ---- control overlay ----
+   Fixed and JS-placed over #main, at a z-index above #deck-stage. This has to
+   sit outside #desk: #desk opens a stacking context at z-index 10, so anything
+   nested inside it renders under the fixed deck stage no matter its own
+   z-index, and the drag surface eats the clicks. */
+#overlay{position:fixed;z-index:18;pointer-events:none;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:14px 0;opacity:0;transition:opacity .5s ease}
+#overlay.on{opacity:1}
+#overlay > *{pointer-events:auto}
+
+#back{font-size:14px;letter-spacing:.24em;padding:14px 34px;font-weight:700;
+  color:var(--amber);border-color:rgba(255,178,74,.34);
+  background:linear-gradient(180deg,rgba(255,140,50,.10),rgba(255,140,50,.02));
+  backdrop-filter:blur(6px);
+  opacity:0;transform:translateY(-8px);pointer-events:none;
+  transition:opacity .45s ease, transform .45s cubic-bezier(.22,.61,.36,1),
+             border-color .2s ease, color .2s ease, box-shadow .2s ease}
+#overlay.on #back{opacity:1;transform:none;pointer-events:auto}
+#back:hover:not(:disabled){border-color:var(--orange);color:#ffd9a8;box-shadow:var(--glow-amber)}
+
+/* --ts is set from JS off the stage width, so the toggles scale with the deck
+   instead of staying at button default size next to a 500px card */
+#toggles{--ts:13px;
+  display:flex;gap:calc(var(--ts) * .72);align-items:center;
+  opacity:0;pointer-events:none;transition:opacity .4s ease}
+#toggles.on{opacity:1;pointer-events:auto}
+#toggles button{font-size:var(--ts);line-height:1;
+  padding:calc(var(--ts) * .68) calc(var(--ts) * 1.15);
+  min-width:calc(var(--ts) * 2.9)}
+#toggles .hint{font-size:calc(var(--ts) * .76);letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink-faint);
+  padding:0 calc(var(--ts) * .55)}
+
+/* ---- act 5: the opened panel fills the main area ---- */
+#view{position:absolute;inset:0;z-index:13;display:flex;flex-direction:column;
+  padding:clamp(16px,2.2vw,30px);overflow:auto;
+  background:linear-gradient(180deg, rgba(79,214,255,.04), transparent 22%), rgba(6,11,17,.94);
+  opacity:0;transform:translateY(12px);pointer-events:none;
+  transition:opacity .45s ease, transform .45s cubic-bezier(.22,.61,.36,1)}
+#view.on{opacity:1;transform:none;pointer-events:auto}
+#view header{display:flex;align-items:baseline;gap:14px;margin-bottom:6px}
+#view h2{font-family:var(--display);font-weight:700;font-size:clamp(15px,1.7vw,21px);
+  letter-spacing:.16em;color:var(--amber);text-shadow:var(--glow-amber)}
+#view .n{font-size:9px;letter-spacing:.3em;color:var(--ink-faint)}
+#view .rule{height:1px;margin:12px 0 16px;
+  background:linear-gradient(90deg,var(--line),transparent)}
+#view .body{font-size:13px;line-height:1.7;color:var(--ink);max-width:70ch}
+#view .body p + p{margin-top:.8em}
+#view .body a{color:var(--cyan)}
+#view-close{position:absolute;right:clamp(16px,2.2vw,30px);top:clamp(16px,2.2vw,30px)}
+
+/* ---- embedded pdf ---- */
+#view.pdf{overflow:hidden}
+#view.pdf .rule{margin-bottom:12px}
+#view.pdf .body{flex:1 1 auto;min-height:0;max-width:none;display:flex;flex-direction:column}
+.pdf-bar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:11px;flex:0 0 auto}
+.pdf-btn{display:inline-block;text-decoration:none;
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink);border:1px solid var(--line);padding:8px 15px;
+  background:linear-gradient(180deg,rgba(79,214,255,.07),rgba(79,214,255,.01));
+  transition:border-color .2s,color .2s,box-shadow .2s}
+.pdf-btn:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:var(--glow-cyan)}
+.pdf-btn:first-child{color:var(--amber);border-color:rgba(255,178,74,.36)}
+.pdf-btn:first-child:hover{border-color:var(--orange);color:#ffd9a8;box-shadow:var(--glow-amber)}
+.pdf-frame{position:relative;flex:1 1 auto;min-height:220px;
+  border:1px solid var(--line);background:#0d1218;overflow:hidden}
+.pdf-pages{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;z-index:2;
+  padding:10px;display:flex;flex-direction:column;gap:10px;scrollbar-width:thin}
+.pdf-pages::-webkit-scrollbar{width:7px}
+.pdf-pages::-webkit-scrollbar-track{background:transparent}
+.pdf-pages::-webkit-scrollbar-thumb{background:rgba(0,240,255,.22)}
+.pdf-pages::-webkit-scrollbar-thumb:hover{background:rgba(0,240,255,.4)}
+/* The page is a white sheet on a dark desk. The border and the cyan cast are
+   what keep it from reading as a hole punched in the panel. */
+.pdf-pages img{display:block;width:100%;height:auto;
+  border:1px solid rgba(0,240,255,.22);
+  box-shadow:0 0 22px rgba(0,0,0,.75),0 0 0 1px rgba(0,0,0,.6)}
+.pdf-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;z-index:2;
+  background:#0d1218}
+.pdf-fallback{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+  z-index:1;text-align:center;font-size:11px;color:var(--ink-faint)}
+
+/* ---- panel body: publication and project lists ----
+   The panels now carry real content rather than a paragraph each, so the body
+   needs a small typographic system: numbered entries, a working-title caveat,
+   and outbound links that read as links without breaking the palette. */
+#view .body h4{
+  margin:22px 0 6px;font-family:var(--display);font-weight:600;
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--cyan);
+}
+#view .body h4:first-child{margin-top:4px}
+#view .body p.wt{margin:0 0 10px;font-size:12px;color:var(--ink-faint)}
+
+#view .body ol.pubs,
+#view .body ol.projs{margin:0;padding:0;list-style:none;counter-reset:pub}
+#view .body ol.pubs > li,
+#view .body ol.projs > li{
+  counter-increment:pub;position:relative;
+  margin:0 0 14px;padding:10px 14px 12px 44px;
+  border:1px solid var(--line-soft);
+  border-left:2px solid rgba(0,220,255,.45);
+  font-size:13px;line-height:1.65;
+}
+#view .body ol.pubs > li::before,
+#view .body ol.projs > li::before{
+  content:'[' counter(pub, decimal-leading-zero) ']';
+  position:absolute;left:10px;top:11px;
+  font-family:var(--display);font-size:10px;letter-spacing:.06em;
+  color:rgba(0,200,240,.75);
+}
+#view .body ol.pubs > li b,
+#view .body ol.projs > li b{color:#dff6ff;font-weight:600}
+
+#view .body a.plink{
+  display:inline-block;margin-top:8px;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;
+  color:var(--cyan);text-decoration:none;
+  border-bottom:1px solid rgba(0,220,255,.35);
+}
+#view .body a.plink:hover{color:#eafcff;border-bottom-color:var(--cyan)}
+#view .body .wip{
+  display:inline-block;margin-left:4px;padding:1px 7px;
+  border:1px solid rgba(255,140,50,.5);
+  font-family:var(--display);font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--amber);
+}
+
+/* Shown instead of the pdf frame when the page is opened from disk — Chromium
+   will not display a file:// subresource for an opaque origin. See js/deck.js. */
+.pdf-note{margin:14px 0 0;padding:12px 14px;border:1px solid var(--line-soft);
+  border-left:2px solid rgba(255,140,50,.5);
+  color:var(--ink-faint);font-size:12.5px;line-height:1.65;letter-spacing:.02em}
+.pdf-note b{color:#ffd9a8;font-weight:600}

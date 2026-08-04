@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nathanherling.com</title>
+<meta name="description" content="Nathan Herling — physics, data science, and instrumentation. ATLAS Run-3 long-lived particle search, detector control systems, and independent mathematics.">
+<link rel="canonical" href="https://nathanherling.com/">
+
+<!-- Social card. og:image MUST be an absolute URL — most scrapers will not
+     resolve a relative one. Regenerate the image with:
+       python3 tools/make-og.py        (renders tools/og-card.html) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="nathanherling.com">
+<meta property="og:url" content="https://nathanherling.com/">
+<meta property="og:title" content="Nathan Herling">
+<meta property="og:description" content="Physics, data science, and instrumentation. ATLAS Run-3 long-lived particle search, detector control systems, and independent mathematics.">
+<meta property="og:image" content="https://nathanherling.com/assets/og/og-card.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Nathan Herling's handwritten signature glowing cyan above the address nathanherling.com in red, over a pixelated data band on a dark technical grid.">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Nathan Herling">
+<meta name="twitter:description" content="Physics, data science, and instrumentation. ATLAS Run-3 long-lived particle search, detector control systems, and independent mathematics.">
+<meta name="twitter:image" content="https://nathanherling.com/assets/og/og-card.png">
+<meta name="twitter:image:alt" content="Nathan Herling's handwritten signature glowing cyan above the address nathanherling.com in red, over a pixelated data band on a dark technical grid.">
+<!-- Icons and the manifest are attached from script, and only when the page is
+     actually served.
+
+     A file:// document has an opaque origin, and Chromium refuses to DISPLAY a
+     file:// subresource for one — logging "Unsafe attempt to load URL <page>
+     from frame with URL <page>", attributed to index.html:1 because the load is
+     parser-initiated. Stylesheets and the script are exempt (they are fetched,
+     not displayed) which is why only this one complained. A favicon on a local
+     file open does nothing anyway, so there is nothing to trade away.
+
+     Classic script, not a module, so it runs at parse time. -->
+<script>
+  if (location.protocol !== 'file:') {
+    var head = document.head;
+    var add = function (rel, href, type, sizes) {
+      var l = document.createElement('link');
+      l.rel = rel; l.href = href;
+      if (type)  l.type = type;
+      if (sizes) l.sizes = sizes;
+      head.appendChild(l);
+    };
+    add('icon', 'assets/favicon.ico', null, 'any');
+    add('icon', 'assets/favicon-32.png', 'image/png', '32x32');
+    add('icon', 'assets/favicon-16.png', 'image/png', '16x16');
+    add('apple-touch-icon', 'assets/apple-touch-icon.png');
+    add('manifest', 'site.webmanifest');
+  }
+</script>
+<meta name="theme-color" content="#04070b">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/splash.css">
+<link rel="stylesheet" href="css/cube.css">
+<link rel="stylesheet" href="css/shell.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/deck.css">
+</head>
+<body>
+
+<div class="grid-bed" aria-hidden="true"></div>
+
+<!-- ================= ACT 1 — SPLASH =================
+     Everything here is present at t=0. The signature is NOT: it is cut, in pen
+     order, when the button is struck. See js/splash.js. -->
+<section id="stage">
+  <canvas id="splash-canvas" aria-hidden="true"></canvas>
+
+  <!-- Sound. Standalone in the top-right rather than crammed into the power
+       module header, which never had the room for it. Nothing on this page
+       loads or plays any audio until this is clicked or the entry button is
+       pressed — see js/main.js. -->
+  <button id="sndToggle" type="button" aria-pressed="false"
+          aria-label="Sound off" title="Sound off">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path class="spk" d="M11 4.5 6.2 8.6H3.2v6.8h3L11 19.5z"/>
+      <path class="w1" d="M14.4 9.3a4.6 4.6 0 0 1 0 5.4"/>
+      <path class="w2" d="M16.7 7.2a8 8 0 0 1 0 9.6"/>
+      <path class="w3" d="M19 5.1a11.4 11.4 0 0 1 0 13.8"/>
+      <path class="off" d="M5 19 19 5"/>
+    </svg>
+  </button>
+
+  <!-- power module -->
+  <section id="power" aria-hidden="true">
+    <div class="head"><span class="dot"></span>POWER SOURCE
+    </div>
+    <div class="row">
+      <div id="battery">
+        <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        <div class="cell"></div><div class="cell"></div>
+      </div>
+      <div id="gauge">
+        <span class="lbl">charge</span><span class="bar"></span>
+        <span class="val" id="chargeval">50</span><span class="pct">%</span>
+      </div>
+    </div>
+    <div class="mods">
+      <div class="mod">
+        <canvas id="orb" width="116" height="94"></canvas>
+        <div class="cap">SOURCE</div>
+      </div>
+      <div class="mod">
+        <canvas id="freq" width="116" height="94"></canvas>
+        <div class="cap">PHASE LOCK <span id="lockval">0</span> %</div>
+      </div>
+    </div>
+  </section>
+
+  <div id="splash-centre">
+    <!-- data-txt duplicates the text for the CRT pseudo-element copies; the
+         glitch bands are clipped copies of the same string. -->
+    <h1 id="sitename" data-txt="nathanherling.com">nathanherling.com</h1>
+    <button id="enterBtn" type="button">press to enter</button>
+  </div>
+
+  <div id="splash-wipe" aria-hidden="true"></div>
+</section>
+
+<!-- ================= ACT 2 — SHELL ================= -->
+<div id="term" aria-live="polite"><div id="term-inner"></div></div>
+
+<!-- ================= ACTS 3-5 — DESK ================= -->
+<div id="desk">
+  <div id="rail">
+    <!-- PELAGIC used to be born inside the tube and travel to the rail. The
+         splash no longer carries a cube, so the rail dock is its only host. -->
+    <div class="slot" id="slot-cube"><span class="slot-tag">pelagic</span>
+      <div class="cube-host" id="pelagic-dock" aria-hidden="false"></div>
+    </div>
+    <div class="slot" id="slot-term"><span class="slot-tag">shell</span></div>
+    <div class="slot" id="slot-sig"><span class="slot-tag">identity</span>
+      <canvas id="sig-canvas" aria-hidden="true"></canvas>
+    </div>
+    <div class="slot" id="slot-dock"><span class="slot-tag">dock</span>
+      <span class="empty">empty</span>
+      <span class="dock-hint">double click or click on panel to open</span>
+    </div>
+  </div>
+
+  <div id="top" role="group" aria-label="Sections"></div>
+
+  <div id="main">
+    <div id="view" role="region" aria-label="Panel content" aria-hidden="true">
+      <button id="view-close" type="button">Close</button>
+      <header><span class="n"></span><h2></h2></header>
+      <div class="rule"></div>
+      <div class="body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- the deck stage is fixed and JS-placed, so it can drift between #main and the dock slot -->
+<div id="deck-stage">
+  <div id="deck"></div>
+  <div id="printer" aria-hidden="true"></div>
+</div>
+
+<!-- Controls ride ABOVE the deck stage. They used to live inside #main, but
+     #desk opens a stacking context at z-index 10, so the fixed deck stage at 14
+     covered them and swallowed every click. -->
+<div id="overlay" aria-hidden="false">
+  <button id="back" type="button">Back to splash</button>
+  <div id="toggles">
+    <button id="prev" type="button" aria-label="Previous face">&lt;</button>
+    <span class="hint">drag to spin</span>
+    <button id="next" type="button" aria-label="Next face">&gt;</button>
+  </div>
+</div>
+
+<!-- A classic script, not a module. index.html is meant to open straight off
+     disk, and browsers refuse to load ES modules from a file:// origin. The
+     js/ modules remain the source; js/site.js is built from them by
+     tools/build.sh. -->
+<script src="js/site.js" defer></script>
+</body>
+</html>

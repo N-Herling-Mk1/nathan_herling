@@ -1,0 +1,89 @@
+/* ============ ACT 1 — the tube ============
+   Overlay stack and shadow geometry ported from helix_splash. The one change:
+   PELAGIC is a child of .crt at z-index 4, so it sits under the scanlines,
+   grille, vignette and glass — inside the screen, not beside it. */
+
+#stage{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:22px;padding:18px;
+  transition:opacity .5s ease}
+#stage.gone{opacity:0;pointer-events:none}
+
+.kicker{position:relative;z-index:2;font-size:10.5px;letter-spacing:.42em;
+  text-transform:uppercase;color:var(--ink-dim);display:flex;align-items:center;gap:12px}
+.kicker .dot{width:5px;height:5px;border-radius:50%;background:var(--amber);box-shadow:var(--glow-amber)}
+
+.console{position:relative;z-index:2;display:flex;flex-direction:column;
+  align-items:center;gap:12px;width:min(94vw, 158vh, 1180px)}
+.crt-wrap{position:relative;width:100%}
+
+.crt{position:relative;width:100%;aspect-ratio:16/9;   /* set from JS via CFG.tube.ar */
+  border-radius:22px/26px;background:#000;overflow:hidden;isolation:isolate;
+  box-shadow:
+    0 0 0 2px rgba(79,214,255,0.10),
+    0 0 0 9px #0a121a,
+    0 0 0 10px rgba(79,214,255,0.10),
+    0 26px 70px rgba(0,0,0,0.85),
+    inset 0 0 90px rgba(0,0,0,0.9)}
+
+#screen{position:absolute;inset:0;width:100%;height:100%;display:block;
+  transform:scale(1.012);z-index:1}
+.crt .ov{position:absolute;inset:0;pointer-events:none}
+
+/* phosphor scanlines */
+.crt .scan{z-index:5;mix-blend-mode:multiply;
+  background:repeating-linear-gradient(to bottom,
+    rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px,
+    rgba(0,0,0,calc(0.34*var(--scan,0.6))) 3px,
+    rgba(0,0,0,calc(0.34*var(--scan,0.6))) 4px)}
+/* RGB aperture grille */
+.crt .mask{z-index:6;mix-blend-mode:screen;opacity:.55;
+  background:repeating-linear-gradient(to right,
+    rgba(255,0,0,0.05) 0px, rgba(255,0,0,0.05) 1px,
+    rgba(0,255,0,0.05) 1px, rgba(0,255,0,0.05) 2px,
+    rgba(0,80,255,0.06) 2px, rgba(0,80,255,0.06) 3px)}
+/* curvature vignette */
+.crt .vig{z-index:7;
+  background:radial-gradient(120% 120% at 50% 50%, transparent 55%,
+    rgba(0,0,0,0.55) 86%, rgba(0,0,0,0.92) 100%)}
+/* glass sheen */
+.crt .glass{z-index:8;border-radius:inherit;
+  background:linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 32%)}
+
+/* laser burns + glass cracks live on the front of the tube */
+#etch{position:absolute;inset:0;width:100%;height:100%;display:block;
+  z-index:9;pointer-events:none}
+
+/* the carved button is the hit target; it only arms once the etch finishes */
+#enterBtn{position:absolute;inset:0;width:100%;height:100%;border:0;outline:0;
+  background:transparent;border-radius:inherit;z-index:10;
+  cursor:default;opacity:0;pointer-events:none}
+#enterBtn.live{cursor:pointer;pointer-events:auto}
+#enterBtn:focus-visible{outline:2px solid var(--amber);outline-offset:-6px;opacity:1}
+
+/* power surge */
+.crt .surge{z-index:12;background:#dff4ff;opacity:0;transition:opacity .08s ease}
+.crt.surge-on .surge{opacity:.85}
+
+/* ---- act 2 handoff: the horizontal wipe ---- */
+.crt .wipe{z-index:13;opacity:0;transform:scaleY(.02);transform-origin:center;
+  background:linear-gradient(to bottom, transparent 0,
+    rgba(223,244,255,.06) 42%, #eaf9ff 50%, rgba(223,244,255,.06) 58%, transparent 100%)}
+.crt.wiping .wipe{animation:wipe .42s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes wipe{
+  0%{opacity:0;transform:scaleY(.02)}
+  20%{opacity:1;transform:scaleY(.05)}
+  58%{opacity:1;transform:scaleY(1)}
+  100%{opacity:0;transform:scaleY(1)}
+}
+/* the phosphor drops out behind the band */
+.crt.wiping #screen,
+.crt.wiping #etch,
+.crt.wiping #pelagic{transition:opacity .22s ease .16s;opacity:0}
+
+.status{position:relative;z-index:2;font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-dim);
+  display:flex;align-items:center;gap:10px;min-height:14px}
+.status .led{width:7px;height:7px;border-radius:50%;background:var(--ink-dim);transition:.2s}
+.status .led.go{background:var(--amber);box-shadow:var(--glow-amber)}
+.status .led.live{background:#52ffa6;box-shadow:0 0 12px rgba(82,255,166,.6)}
+.status b{color:var(--cyan);font-weight:400}

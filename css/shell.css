@@ -1,0 +1,28 @@
+/* [shell]>_ — ported from init_home. Centred for act 2, drifts into rail slot
+   L2 for act 3. Position is driven from JS (js/layout.js place()), so the rail
+   can be re-proportioned without touching this file. */
+
+#term{position:fixed;z-index:22;opacity:0;pointer-events:none;
+  left:50%;top:50%;width:min(820px,88vw);
+  font-size:clamp(14px,2.1vw,21px);line-height:1.75;
+  transform:translate(-50%,-50%);
+  will-change:left,top,width,font-size,transform;
+  transition:left 1.05s cubic-bezier(.36,.05,.16,1),
+             top 1.05s cubic-bezier(.36,.05,.16,1),
+             width 1.05s cubic-bezier(.36,.05,.16,1),
+             font-size 1.05s cubic-bezier(.36,.05,.16,1),
+             transform 1.05s cubic-bezier(.36,.05,.16,1),
+             opacity .4s ease}
+#term.live{opacity:1}
+/* once docked, JS owns left/top/width/font-size; kill the centring transform */
+#term.docked{transform:translate(0,0)}
+
+#term-inner{overflow:hidden}
+.tline{white-space:pre;color:var(--ink)}
+.tline .p{color:var(--cyan)}
+.tline .ok{color:var(--amber)}
+.tline.sub{color:var(--ink-dim);font-size:.86em}
+.tline.login{color:var(--ink-dim);font-size:.86em;margin-bottom:.35em;letter-spacing:.06em}
+#cursor{display:inline-block;width:.62em;height:1.05em;vertical-align:-2px;
+  background:var(--cyan);animation:blink 1s steps(1) infinite}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}

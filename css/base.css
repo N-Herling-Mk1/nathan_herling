@@ -1,0 +1,29 @@
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%}
+body{
+  background:
+    radial-gradient(1200px 700px at 30% -10%, rgba(31,143,196,0.10), transparent 60%),
+    radial-gradient(900px 600px at 110% 120%, rgba(255,122,48,0.06), transparent 55%),
+    var(--bg);
+  color:var(--ink); font-family:var(--mono); overflow:hidden;
+}
+button{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink);background:transparent;border:1px solid var(--line);padding:8px 13px;cursor:pointer;
+  transition:border-color .2s,color .2s,opacity .2s}
+button:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}
+button:disabled{opacity:.32;cursor:default}
+button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.hidden{display:none !important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* faint engineering grid, ported from helix_splash's stage */
+.grid-bed{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+  background-size:46px 46px;
+  -webkit-mask-image:radial-gradient(circle at 50% 45%,#000 0%,transparent 78%);
+          mask-image:radial-gradient(circle at 50% 45%,#000 0%,transparent 78%)}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}

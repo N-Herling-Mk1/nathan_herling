@@ -1,0 +1,9 @@
+file,sizes,purpose
+assets/favicon.ico,16/24/32/48/64/128/256,browser tab and bookmarks
+assets/favicon-16.png,16,explicit png hint
+assets/favicon-32.png,32,explicit png hint
+assets/apple-touch-icon.png,180,ios home screen
+assets/icon-192.png,192,web manifest
+assets/icon-512.png,512,web manifest and splash
+assets/brand/nh_ico_mk1_source.png,1024,original artwork - not served
+assets/brand/nh_mark.png,910,circle-masked master - not served

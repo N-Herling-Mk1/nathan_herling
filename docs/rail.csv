@@ -1,0 +1,5 @@
+slot,id,content,status
+L1,slot-cube,PELAGIC cube,stub - to be designed further
+L2,slot-term,shell terminal,live
+L3,slot-sig,small screen with signature over the url,live
+L4,slot-dock,empty; dock target for the minimised deck,live
