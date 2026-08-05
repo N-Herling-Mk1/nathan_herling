@@ -1,5 +1,10 @@
 // Synthesized SFX. Nothing sounds until a user gesture unlocks the context.
+//
+// File-backed cues no longer build their own elements: they come from
+// js/media.js, which has already fetched the bytes by the time the visitor can
+// press anything. See the header there for what that fixed.
 import { SPARK_DATA, LOOP_DATA } from './sfxdata.js';
+import * as media from './media.js';
 let actx = null, on = false, noiseBuf = null, master = null, trackEl = null;
 
 export function unlock() {
@@ -81,22 +86,24 @@ export function snap() {
    overlap without one cancelling the other. */
 let cueEl = null, cueUrl = '';
 
-/* The file in assets/audio/ is preferred. Some browsers refuse media
+/* The preloaded copy in assets/audio/ is preferred. Some browsers refuse media
    subresources on a file:// origin, so on a load error we swap to the
    compiled-in copy rather than going silent. */
 function makeCue(url) {
-  const el = new Audio(url);
-  el.preload = 'auto';
-  el.addEventListener('error', () => {
-    if (el.src !== SPARK_DATA) { el.src = SPARK_DATA; el.load(); }
-  });
+  const el = media.element(url);
+  if (!el.__nhFallback) {
+    el.__nhFallback = true;
+    el.addEventListener('error', () => {
+      if (el.src !== SPARK_DATA) { el.src = SPARK_DATA; el.load(); }
+    });
+  }
   return el;
 }
 export function cue(url) {
   const src = url || SPARK_DATA;
   try {
     if (!cueEl || cueUrl !== src) { cueEl = makeCue(src); cueUrl = src; }
-    cueEl.currentTime = 0;
+    media.rewind(cueEl);
     const p = cueEl.play(); if (p && p.catch) p.catch(() => {});
   } catch (e) {}
 }
@@ -108,8 +115,8 @@ export function preload(url) {
 export function startTrack(url) {
   if (!url || !on) return;
   try {
-    if (!trackEl) { trackEl = new Audio(url); trackEl.preload = 'auto'; trackEl.volume = 0.8; }
-    trackEl.currentTime = 0;
+    if (!trackEl) { trackEl = media.element(url); trackEl.volume = 0.8; }
+    media.rewind(trackEl);
     const p = trackEl.play(); if (p && p.catch) p.catch(() => {});
   } catch (e) {}
 }
@@ -120,14 +127,15 @@ export function stopTrack() { try { if (trackEl) { trackEl.pause(); trackEl.curr
    compiled-in copy on failure. These are ordinary assets with no inlined
    fallback, so a missing file is silence rather than the wrong sound. One
    element cached per url, so a cue can be re-fired without re-fetching. */
-const shots = new Map();
-
 export function shot(url, onEnd) {
   if (!url) { if (onEnd) onEnd(); return; }
   try {
-    let el = shots.get(url);
-    if (!el) { el = new Audio(url); el.preload = 'auto'; shots.set(url, el); }
-    el.currentTime = 0;
+    const el = media.element(url);
+    // Rewind through media.rewind, NOT `el.currentTime = 0`. On an element with
+    // no data that assignment throws, the catch below fires onEnd, and whatever
+    // was chained behind the cue runs as though the cue had already finished —
+    // which is how the narration used to land on top of the ready tone.
+    media.rewind(el);
     // onEnd fires on natural end OR on failure to play, so a missing file
     // cannot strand whatever was chained behind it
     el.onended = null;
@@ -139,8 +147,7 @@ export function shot(url, onEnd) {
 
 export function shotPreload(url) {
   if (!url) return;
-  try { if (!shots.has(url)) { const el = new Audio(url); el.preload = 'auto'; shots.set(url, el); } }
-  catch (e) {}
+  try { media.element(url); } catch (e) {}
 }
 
 /* ---- looping bed ----------------------------------------------------------
@@ -203,9 +210,8 @@ export function loopArm(url) {
   const src = url || LOOP_DATA;
   try {
     if (!loopEl || loopUrl !== src) {
-      loopEl = new Audio(src);
+      loopEl = media.element(src);
       loopEl.loop = true;
-      loopEl.preload = 'auto';
       loopEl.volume = 1;
       loopUrl = src;
       // same file:// guard as the cue — fall back to the compiled-in copy

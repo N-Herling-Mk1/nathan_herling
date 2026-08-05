@@ -10,6 +10,7 @@
 import { CFG, TOTAL, p } from './config.js';
 import * as sig    from './signature.js';
 import * as audio  from './audio.js';
+import * as media  from './media.js';
 import * as splash from './splash.js';
 import * as power  from './power.js';
 import * as cube   from './cube.js';
@@ -165,6 +166,36 @@ function tick(now) {
   }
 }
 
+/* ---- preload readout ----
+   Terse status line, bottom-left of the splash: bar, percent, byte count. It
+   reports rather than gates — the entry button stays live throughout, and a
+   press mid-load still works, it just may not have every cue in hand yet. Goes
+   quiet a beat after it reads READY so it is not sitting on the finished
+   composition. */
+const preEl  = $('#preload');
+const preBar = $('#preload .bar i');
+const prePct = $('#preload .pct');
+let preHide = 0;
+
+function onPreload(p) {
+  if (!preEl) return;
+  const pct = Math.round(p.pct);
+  if (preBar) preBar.style.width = pct + '%';
+  if (prePct) prePct.textContent = p.finished ? 'READY' : pct + '%';
+  preEl.setAttribute('data-count', p.done + '/' + p.total);
+  if (p.url && !p.ok) {
+    // A cue that did not load is worth saying out loud, not swallowing: the
+    // beat it belongs to will simply be silent.
+    console.warn('[nh] audio unavailable, that cue will be silent:', p.url);
+    preEl.classList.add('warn');
+  }
+  if (p.finished) {
+    preEl.classList.add('done');
+    clearTimeout(preHide);
+    preHide = setTimeout(() => preEl.classList.add('gone'), 1400);
+  }
+}
+
 /* ---- boot ---- */
 async function start() {
   window.__nh_booted = true;   // read by the boot guard in index.html
@@ -197,12 +228,24 @@ async function start() {
   }
   addEventListener('load', () => { deck.place(); shell.place(layout.rect('L2')); });
 
-  /* No audio is loaded, armed or played at boot. Every earlier attempt to get
-     ahead of the autoplay policy — preloading files, arming the bed muted —
-     bought nothing and cost a stack of "AudioContext was not allowed to start"
-     warnings, because the context was being built before any gesture existed.
-     The speaker is the mechanism now: a file loads the first time it is
-     actually wanted, and the context is only ever created inside a click. */
+  /* ---- audio preload ----
+     Every cue, bed and narration line is fetched now, while the splash is up
+     and the visitor is reading it. This is the fix for cues that played
+     sometimes and not others: before, a file was created and played on the
+     same tick, so the sound raced its own download and lost whenever the
+     network was slow — see the header in js/media.js.
+
+     Note the distinction that the earlier note here collapsed. ARMING audio
+     before a gesture is what the autoplay policy refuses, and that is what
+     produced the "AudioContext was not allowed to start" warnings: a context
+     built with no activation. FETCHING bytes needs no gesture at all. So this
+     loads and nothing else — no context, no play(), no muted bed. The speaker
+     is still the mechanism that makes sound audible; it just no longer has to
+     wait for a download when it is clicked.
+
+     Deferred one frame so the first paint of the splash is not competing with
+     the first three requests. */
+  requestAnimationFrame(() => media.warm(onPreload));
 
   /* Sound toggle. Starts off, so it reads as an invitation rather than a
      control that is already doing its job. Clicking it is itself the gesture

@@ -197,3 +197,45 @@
 @media (prefers-reduced-motion:reduce){
   #enterBtn.blown::before,#enterBtn.blown::after{animation:none;opacity:0}
 }
+
+
+/* ---- media preload readout ------------------------------------------------
+   Bottom-left, deliberately small: it is a status line, not a feature. Cyan
+   ladder like the rest of act 1. Fades out a beat after READY rather than
+   snapping away, and never reflows — the bar and the percent field are both
+   fixed width, so counting up cannot shift the row. */
+#preload{
+  position:absolute;left:26px;bottom:22px;z-index:4;
+  display:flex;align-items:center;gap:9px;
+  font:400 11px/1 var(--mono);letter-spacing:.14em;
+  color:var(--ink-dim);pointer-events:none;
+  opacity:.92;transition:opacity .5s ease;
+}
+#preload .tag{color:rgba(0,215,250,.55)}
+#preload .bar{
+  position:relative;display:block;width:132px;height:4px;
+  background:rgba(0,200,240,.10);
+  border:1px solid rgba(0,200,240,.22);border-radius:1px;overflow:hidden;
+}
+#preload .bar i{
+  display:block;height:100%;width:0%;
+  background:linear-gradient(90deg,rgba(0,200,240,.45),#00e6ff);
+  box-shadow:0 0 8px rgba(0,220,255,.55);
+  transition:width .18s linear;
+}
+/* Fixed width so 9% -> 100% -> READY cannot nudge anything sideways. */
+#preload .pct{display:inline-block;min-width:5.2ch;text-align:left;color:rgba(0,215,250,.75)}
+#preload::after{content:attr(data-count);color:rgba(0,215,250,.30)}
+
+#preload.done .pct{color:#00e6ff;text-shadow:0 0 8px rgba(0,220,255,.5)}
+#preload.warn .bar{border-color:rgba(255,150,60,.45)}
+#preload.warn .bar i{background:linear-gradient(90deg,rgba(255,140,50,.45),var(--amber))}
+#preload.gone{opacity:0}
+
+@media (max-width:720px){
+  #preload{left:16px;bottom:14px;gap:7px;font-size:10px}
+  #preload .bar{width:92px}
+}
+@media (prefers-reduced-motion: reduce){
+  #preload .bar i{transition:none}
+}

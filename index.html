@@ -123,6 +123,15 @@
     <button id="enterBtn" type="button">press to enter</button>
   </div>
 
+  <!-- Media preload readout. Every audio file is fetched while this screen is
+       up, so a cue never has to race its own download when it fires. Reports
+       only — the entry button is live the whole time. See js/media.js. -->
+  <div id="preload" aria-live="polite" data-count="0/0">
+    <span class="tag">AUDIO</span>
+    <span class="bar"><i></i></span>
+    <span class="pct">0%</span>
+  </div>
+
   <div id="splash-wipe" aria-hidden="true"></div>
 </section>
 

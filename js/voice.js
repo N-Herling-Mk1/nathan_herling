@@ -22,6 +22,7 @@
 
 import { CFG } from './config.js';
 import { VO_ENV } from './vodata.js';
+import * as media from './media.js';
 
 const SERVED = location.protocol !== 'file:';
 
@@ -30,7 +31,6 @@ let el = null, curKey = '', wired = new WeakSet();
 let level = 0, synthPhase = 0;
 let onEndCb = null;
 
-const els = new Map();
 
 /* 0..1, smoothed. cube.js reads this every frame. */
 export const rms = () => level;
@@ -42,11 +42,11 @@ function url(key) {
   return base + 'vo_' + key + '.wav';
 }
 
-function element(key) {
-  let a = els.get(key);
-  if (!a) { a = new Audio(url(key)); a.preload = 'auto'; els.set(key, a); }
-  return a;
-}
+/* Elements come from js/media.js, which has already fetched them — so a line
+   starts on the frame it is asked for instead of whenever the wav arrives.
+   Shared cache, so preload() here and media.warm() cannot fetch the same file
+   twice. */
+function element(key) { return media.element(url(key)); }
 
 /* Analyser is opt-in and only when served — see the note at the top. */
 function attach(a) {
@@ -81,7 +81,7 @@ export function play(key, onEnd) {
     const a = element(key);
     attach(a);
     if (actx && actx.state === 'suspended') actx.resume();
-    a.currentTime = 0;
+    media.rewind(a);
     onEndCb = onEnd || null;
     a.onended = () => { if (onEndCb) { const f = onEndCb; onEndCb = null; f(); } };
     const p = a.play();
