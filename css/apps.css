@@ -1,0 +1,145 @@
+/* ============ TOOLS ============
+   Tool tiles in the top row, and the apps they open inside #view.
+   Everything is on the site tokens (css/tokens.css); per-category colours come
+   from data/schedule.json and arrive as --c on the element. */
+
+/* ---- tool tiles: right of the four deck cards ---- */
+#top{grid-template-columns:repeat(4, minmax(0,1fr)) 1px repeat(var(--tools,0), minmax(0,.72fr))}
+#top .top-sep{align-self:stretch;margin:8px 0;
+  background:linear-gradient(180deg,transparent,var(--line),transparent);
+  opacity:0;transition:opacity .45s ease .28s}
+#desk.dealt #top .top-sep{opacity:1}
+#top .card:nth-child(n+6){transition-delay:.32s}
+.card.tool{border-color:rgba(255,178,74,.16)}
+.card.tool .n{color:rgba(255,178,74,.55)}
+.card.tool .l{display:flex;align-items:center;gap:8px}
+.card.tool .g{flex:none;width:14px;height:14px;color:var(--amber);opacity:.85}
+.card.tool:hover:not(:disabled){border-color:var(--amber);background:rgba(28,18,8,.7)}
+.card.tool:hover .l{color:#ffd9a8}
+.card.tool[aria-current="true"]{border-color:var(--amber)}
+.card.tool[aria-current="true"] .l{color:var(--amber)}
+.card.tool[aria-current="true"]::after{background:var(--amber);box-shadow:var(--glow-amber)}
+@media (max-width:860px){
+  #top{grid-template-columns:repeat(4, minmax(0,1fr)) 1px repeat(var(--tools,0), minmax(0,.6fr))}
+  .card.tool .g{display:none}
+}
+
+/* ---- #view hosting an app: full width, app scrolls itself ---- */
+#view.app-host .body{max-width:none;flex:1 1 auto;min-height:0;font-size:12px;line-height:1.45}
+
+/* ---- shared app chrome ---- */
+.app{display:flex;flex-direction:column;gap:10px;min-height:0;container-type:inline-size}
+.app [hidden]{display:none !important}
+.app-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.app-bar h3{font-family:var(--display);font-weight:900;font-size:clamp(15px,1.6vw,22px);
+  letter-spacing:.1em;color:var(--cyan);text-shadow:var(--glow-cyan)}
+.app-actions{display:flex;gap:6px;flex-wrap:wrap}
+.app-btn{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink);border:1px solid var(--line);padding:6px 11px;cursor:pointer;
+  background:transparent;display:inline-flex;align-items:center}
+.app-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.app-btn.warn{color:var(--amber);border-color:rgba(255,178,74,.4);padding:3px 9px;font-size:10px}
+.app-btn.danger{color:#ff6a5a;border-color:rgba(224,0,16,.45)}
+.app-btn.danger:hover{color:#ffb0a6;border-color:#ff4a3a}
+
+.app-statusrow{display:flex;align-items:center;gap:10px;min-height:18px}
+.app-status{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--ink-dim);min-width:0}
+.app-status-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-status-bar{flex:none;width:120px;height:3px;background:var(--line-soft);overflow:hidden}
+.app-status-bar i{display:block;height:100%;width:0;background:var(--cyan);transition:width .2s ease}
+.app-status[data-kind="ok"] .app-status-bar i{background:var(--cyan)}
+.app-status[data-kind="warn"] .app-status-bar i{background:var(--amber)}
+.app-status[data-kind="warn"]{color:var(--amber)}
+.app-status[data-kind="err"] .app-status-bar i{background:#e0001a;width:100% !important}
+.app-status[data-kind="err"]{color:#ff6a5a}
+.app-warnings{font-family:var(--mono);font-size:11px;white-space:pre-wrap;color:var(--amber);
+  border:1px solid rgba(255,178,74,.35);background:rgba(28,18,8,.5);padding:8px 10px}
+
+/* ============ CALENDAR ============ */
+.app-calendar{--cell-h:clamp(66px, 10.5vh, 118px)}
+.cal-layout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:14px;align-items:start}
+@container (max-width:820px){ .cal-layout{grid-template-columns:minmax(0,1fr)} }
+
+.cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}
+.cal-dow div{font-family:var(--display);font-size:9.5px;letter-spacing:.24em;color:var(--ink-dim);padding:4px 6px}
+.cal-grid{border-top:1px solid var(--line);border-left:1px solid var(--line)}
+
+/* Fixed-height cells: each entry is its own row and the cell scrolls — it never grows. */
+.cal-cell{height:var(--cell-h);min-width:0;padding:3px 3px 4px;cursor:pointer;
+  display:flex;flex-direction:column;
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:rgba(7,13,20,.55);transition:background .15s ease}
+.cal-cell:hover{background:rgba(11,23,33,.8)}
+.cal-cell.out{background:rgba(3,6,9,.6)}
+.cal-cell.out .num{opacity:.4}
+.cal-cell.today{outline:1px solid var(--cyan);outline-offset:-1px;box-shadow:inset 0 0 14px rgba(79,214,255,.22)}
+.cal-cell.today .num{color:var(--cyan)}
+.cal-cell.sel{background:rgba(31,143,196,.16)}
+.cal-cell .num{flex:none;font-family:var(--display);font-weight:700;font-size:11px;padding:0 2px 2px;color:var(--ink)}
+
+.cal-evs{list-style:none;margin:0;padding:0;overflow-y:auto;flex:1;scrollbar-width:thin}
+.cal-ev{display:flex;gap:4px;align-items:baseline;font-size:10.5px;line-height:1.3;
+  padding:1px 4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;
+  border-left:2px solid var(--c);
+  background:color-mix(in srgb, var(--c) 11%, transparent)}
+.cal-ev.allday{background:color-mix(in srgb, var(--c) 26%, transparent)}
+.cal-ev .ev-t{flex:none;color:var(--ink-dim)}
+.cal-ev .ev-n{overflow:hidden;text-overflow:ellipsis;color:#cfefff}
+@container (max-width:560px){
+  .app-calendar{--cell-h:54px}
+  .cal-ev{font-size:0;height:4px;padding:0;border-left:0;background:var(--c)}
+}
+
+.cal-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.cal-chip{font-size:10.5px;letter-spacing:.06em;text-transform:none;padding:3px 8px;color:var(--ink-dim)}
+.cal-chip::before{content:"";display:inline-block;width:9px;height:9px;margin-right:6px;
+  background:var(--c);vertical-align:-1px}
+.cal-chip.off{opacity:.35;text-decoration:line-through}
+
+.cal-detail{border:1px solid var(--line);background:rgba(7,13,20,.7);padding:10px;position:sticky;top:0}
+.cal-detail-date{font-family:var(--display);font-size:12px;letter-spacing:.12em;color:var(--amber);margin-bottom:8px}
+.cal-detail-list{list-style:none;margin:0;padding:0}
+.cal-detail-list li{border-left:2px solid var(--c);padding:5px 8px;margin-bottom:6px;
+  background:color-mix(in srgb, var(--c) 8%, transparent)}
+.cal-detail-list .time{color:var(--ink-dim);font-size:11px}
+.cal-detail-list .name{color:#dff6ff;font-size:13px}
+.cal-detail-list .meta{display:block;color:var(--ink-dim);font-size:11px}
+.cal-detail-list a.meta{color:var(--cyan)}
+.cal-detail-list .empty{border:0;background:none;color:var(--ink-dim);padding:0}
+
+/* ============ LINK DOCK ============ */
+.ld-drop{border:1px dashed var(--line);background:rgba(7,13,20,.6);padding:18px 14px;text-align:center;
+  transition:border-color .15s ease, box-shadow .15s ease}
+.ld-drop.over{border-style:solid;border-color:var(--cyan);box-shadow:inset 0 0 22px rgba(79,214,255,.18), var(--glow-cyan)}
+.ld-drop-main{font-family:var(--display);font-size:12px;letter-spacing:.12em;color:var(--cyan);margin-bottom:4px}
+.ld-drop-sub{font-size:11px;color:var(--ink-dim);margin-bottom:10px}
+.ld-form{display:flex;gap:6px;max-width:520px;margin:0 auto}
+.ld-input{flex:1;min-width:0;font:inherit;font-size:12px;color:var(--ink);background:var(--bg);
+  border:1px solid var(--line);padding:6px 10px}
+.ld-input:focus{outline:none;border-color:var(--cyan)}
+
+.ld-tiles{list-style:none;margin:0;padding:0;display:grid;gap:10px;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+.ld-tile{border:1px solid var(--line);background:rgba(7,13,20,.7);padding:10px;
+  display:flex;flex-direction:column;gap:8px;min-width:0}
+.ld-tile[data-state="probing"]{border-color:rgba(255,178,74,.5)}
+.ld-tile[data-state="failed"]{border-color:rgba(224,0,16,.5)}
+.ld-head{display:flex;gap:10px;align-items:center;min-width:0}
+.ld-icon{flex:none;width:46px;height:46px;display:grid;place-items:center;border:1px solid var(--line);background:var(--bg)}
+.ld-icon img{max-width:38px;max-height:38px}
+.ld-icon .ph{font-family:var(--display);font-size:17px;color:var(--ink-dim)}
+.ld-text{flex:1;min-width:0}
+.ld-title{width:100%;font:inherit;font-size:13px;color:#dff6ff;background:transparent;border:0;
+  border-bottom:1px solid transparent;padding:0}
+.ld-title:focus{outline:none;border-bottom-color:var(--cyan)}
+.ld-url{display:block;font-size:10.5px;color:var(--ink-dim);white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;text-decoration:none}
+.ld-url:hover{color:var(--cyan)}
+.ld-src{font-size:10.5px;color:var(--ink-dim)}
+.ld-src b{font-weight:normal;color:var(--amber)}
+.ld-alts{display:flex;gap:4px;flex-wrap:wrap}
+.ld-alt{width:30px;height:30px;padding:2px;display:grid;place-items:center;background:var(--bg)}
+.ld-alt img{max-width:24px;max-height:24px}
+.ld-alt.on{border-color:var(--cyan);box-shadow:var(--glow-cyan)}
+.ld-actions{display:flex;justify-content:flex-end;gap:6px}
+.ld-actions .app-btn{font-size:10px;padding:3px 8px}

@@ -308,12 +308,20 @@ async function start() {
   let seen = false;
   try { seen = sessionStorage.getItem('nh_seen') === '1'; } catch (e) {}
 
+  /* A tool deep link (nathanherling.com/#calendar) skips the splash and lands
+     on that tool: it is a bookmark to a working page, not a first visit. */
+  const deep = location.hash.length > 1 && deck.hasTool(decodeURIComponent(location.hash.slice(1)));
+
   requestAnimationFrame(loop);
 
-  if (reduced || seen) {
+  if (reduced || seen || deep) {
     // wait one frame so the desk has real geometry before we measure it
-    requestAnimationFrame(() => requestAnimationFrame(skipToDesk));
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      skipToDesk();
+      if (deep) setTimeout(() => deck.openToolFromHash(), 120);
+    }));
   }
+  addEventListener('hashchange', () => { if (act !== 1) deck.openToolFromHash(); });
 }
 
 start();

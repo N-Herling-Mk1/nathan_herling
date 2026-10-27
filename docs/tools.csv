@@ -1,0 +1,3 @@
+slot,id,label,code,data,status
+T1,calendar,Calendar,js/apps/calendar.js,data/schedule.json,live
+T2,linkdock,Link Dock,js/apps/linkdock.js,data/links.json,live

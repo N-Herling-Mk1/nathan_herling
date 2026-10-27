@@ -5,7 +5,6 @@ export const CFG = {
   domain: 'nathanherling.com',
   cmd: './init_home_nathan_herling',
   prompt: '<span class="p">[shell]&gt;</span> ',
-  enterText: 'PRESS \u2009 TO \u2009 ENTER',
 
   // drop the file in assets/audio/ and name it here; starts on EXEC
   track: '',
@@ -144,9 +143,8 @@ export const CFG = {
     orb: { corona: 0.15, flare: 0.35, current: 1.30, streamer: 1.85, breathe: 0 }
   },
 
-  /* Only `color` survives from the old tube preset — pal() keys off it and
-     layout.js draws the rail placard through the same ladder. */
-  crt: { color: 'ares' },
+  /* Beam palette for the rail placard and url embers — a key of LASER below. */
+  beam: 'ares',
 
 
   /* The deck rides above the centre of the main area rather than dead centre —
@@ -163,15 +161,6 @@ export const CFG = {
     togScale: 0.0165, // toggle text size as a fraction of stage width
     togMin: 13, togMax: 21,
     margin: 14        // px of breathing room at every edge
-  },
-
-  /* phosphor colour for the signature. The CRT splits the source into R/G/B
-     and recombines with 'lighter', so a green source fringes more softly than
-     a white one — the red and blue channels have less to carry. */
-  ink: {
-    sig:     '#5cffa4',
-    sigGlow: 'rgba(72,255,154,.62)',
-    sigBlur: 11
   },
 
   /* The etched url stays hot after the cut: a slow aperiodic pulse plus sparks
@@ -328,6 +317,15 @@ export const CFG = {
           + '<li><b>Extending the Real (a,b) Parameterization to the Cubic: '
           + 'Vieta Conditions and the Classical Solution</b></li>'
           + '</ol>' }
+  ],
+
+  /* Tool tiles, right of the four deck cards. Not deck faces: a click docks
+     the deck and mounts the app (js/apps/<id>.js) in the main area. Data lives
+     in data/ and is edited in the repo — see docs/apps.md. The id doubles as
+     the URL hash, so nathanherling.com/#calendar opens straight to it. */
+  tools: [
+    { id: 'calendar', label: 'Calendar', glyph: 'calendar', blurb: 'Schedule from data/schedule.json' },
+    { id: 'linkdock', label: 'Link Dock', glyph: 'link', blurb: 'Drop a URL, pull its icon' }
   ]
 };
 
@@ -351,7 +349,7 @@ export const LASER = {
   cyan:   { beam:'rgb(50,200,255)', glow:'rgba(70,210,255,0.85)', hot:'#40c8ff', hot2:'#a0e0ff', flare:[80,210,255] },
   violet: { beam:'rgb(200,90,255)', glow:'rgba(200,100,255,.85)', hot:'#c870ff', hot2:'#e0b0ff', flare:[210,110,255] }
 };
-export const pal = () => LASER[CFG.crt.color] || LASER.ares;
+export const pal = () => LASER[CFG.beam] || LASER.ares;
 
 export const TOTAL = CFG.beats.reduce((s, b) => s + b.ms, 0);
 export const OFF = (() => { let a = 0; return CFG.beats.map(b => { const v = a; a += b.ms; return v; }); })();

@@ -1,11 +1,16 @@
 /* GENERATED — do not edit. Built from the js/ modules by tools/build.sh. */
 (() => {
+  var __defProp = Object.defineProperty;
+  var __export = (target3, all) => {
+    for (var name in all)
+      __defProp(target3, name, { get: all[name], enumerable: true });
+  };
+
   // js/config.js
   var CFG = {
     domain: "nathanherling.com",
     cmd: "./init_home_nathan_herling",
     prompt: '<span class="p">[shell]&gt;</span> ',
-    enterText: "PRESS \u2009 TO \u2009 ENTER",
     // drop the file in assets/audio/ and name it here; starts on EXEC
     track: "",
     /* Two one-shots on the boot timeline. Both are plain assets loaded by path —
@@ -142,9 +147,8 @@
          breathe 0 = no pulse on the object. */
       orb: { corona: 0.15, flare: 0.35, current: 1.3, streamer: 1.85, breathe: 0 }
     },
-    /* Only `color` survives from the old tube preset — pal() keys off it and
-       layout.js draws the rail placard through the same ladder. */
-    crt: { color: "ares" },
+    /* Beam palette for the rail placard and url embers — a key of LASER below. */
+    beam: "ares",
     /* The deck rides above the centre of the main area rather than dead centre —
        it leaves room for the toggles underneath and stops the composition sitting
        low in the frame. Fraction of the stage height. */
@@ -168,14 +172,6 @@
       togMax: 21,
       margin: 14
       // px of breathing room at every edge
-    },
-    /* phosphor colour for the signature. The CRT splits the source into R/G/B
-       and recombines with 'lighter', so a green source fringes more softly than
-       a white one — the red and blue channels have less to carry. */
-    ink: {
-      sig: "#5cffa4",
-      sigGlow: "rgba(72,255,154,.62)",
-      sigBlur: 11
     },
     /* The etched url stays hot after the cut: a slow aperiodic pulse plus sparks
        popping off random points of the glyph run. */
@@ -298,6 +294,14 @@
         blurb: "Root geometry and the folded plane",
         body: `<p>Independent work, intended for publication.</p><p>A bound relating a quadratic's focus to its roots, and a real (a,b) chart that puts the real and complex root classes on one flat page \u2014 the folded plane \u2014 using real parameters only, with no imaginary coordinate.</p><h4>Planned publications</h4><p class="wt">Submitting Fall 2026. Working titles.</p><ol class="pubs"><li><b>Vieta Conditions and a Real (a,b) Parameterization: Bounding Real and Complex Quadratic Roots</b></li><li><b>Extending the Real (a,b) Parameterization to the Cubic: Vieta Conditions and the Classical Solution</b></li></ol>`
       }
+    ],
+    /* Tool tiles, right of the four deck cards. Not deck faces: a click docks
+       the deck and mounts the app (js/apps/<id>.js) in the main area. Data lives
+       in data/ and is edited in the repo — see docs/apps.md. The id doubles as
+       the URL hash, so nathanherling.com/#calendar opens straight to it. */
+    tools: [
+      { id: "calendar", label: "Calendar", glyph: "calendar", blurb: "Schedule from data/schedule.json" },
+      { id: "linkdock", label: "Link Dock", glyph: "link", blurb: "Drop a URL, pull its icon" }
     ]
   };
   var LASER = {
@@ -308,7 +312,7 @@
     cyan: { beam: "rgb(50,200,255)", glow: "rgba(70,210,255,0.85)", hot: "#40c8ff", hot2: "#a0e0ff", flare: [80, 210, 255] },
     violet: { beam: "rgb(200,90,255)", glow: "rgba(200,100,255,.85)", hot: "#c870ff", hot2: "#e0b0ff", flare: [210, 110, 255] }
   };
-  var pal = () => LASER[CFG.crt.color] || LASER.ares;
+  var pal = () => LASER[CFG.beam] || LASER.ares;
   var TOTAL = CFG.beats.reduce((s, b) => s + b.ms, 0);
   var OFF = (() => {
     let a = 0;
@@ -1757,7 +1761,7 @@
     { f: 0.131, mf: 0.047, amp: 0.78, tint: "255,110,80", lw: 0.9 }
   ].map((o) => ({ ...o, ph: Math.random() * 6.283, mph: Math.random() * 6.283 }));
   var chaosMix = 0;
-  function drawChaos(w, h, cy) {
+  function drawChaos(w, h2, cy) {
     fctx.save();
     fctx.globalCompositeOperation = "lighter";
     fctx.shadowColor = "rgba(255,60,50,.9)";
@@ -1766,7 +1770,7 @@
       o.ph += o.f;
       o.mph += o.mf;
       const env = 0.45 + 0.55 * Math.sin(o.mph);
-      const amp = h * 0.4 * o.amp * env * chaosMix;
+      const amp = h2 * 0.4 * o.amp * env * chaosMix;
       fctx.strokeStyle = `rgba(${o.tint},${(0.85 * chaosMix).toFixed(3)})`;
       fctx.lineWidth = o.lw;
       fctx.beginPath();
@@ -1780,8 +1784,8 @@
     fctx.shadowBlur = 0;
   }
   function drawFreq(p2, firing2) {
-    const w = fq.width, h = fq.height, cy = Math.round(h * 0.5);
-    fctx.clearRect(0, 0, w, h);
+    const w = fq.width, h2 = fq.height, cy = Math.round(h2 * 0.5);
+    fctx.clearRect(0, 0, w, h2);
     const lock = Math.pow(Math.max(0, (p2 - 0.12) / 0.88), 1.4);
     refPhase += REF_FREQ;
     fctx.save();
@@ -1793,7 +1797,7 @@
       let err = ((refPhase - o.phase + Math.PI) % 6.283 + 6.283) % 6.283 - Math.PI;
       o.phase += err * 0.09 * lock;
       spread += Math.abs(err);
-      const amp = h * 0.3 * o.amp * (0.45 + 0.55 * p2);
+      const amp = h2 * 0.3 * o.amp * (0.45 + 0.55 * p2);
       fctx.strokeStyle = `rgba(${o.tint},${(0.3 + 0.55 * lock).toFixed(3)})`;
       fctx.lineWidth = 1;
       fctx.beginPath();
@@ -1807,9 +1811,9 @@
     const coh = Math.max(0, 1 - spread / OSC.length / Math.PI);
     fqCoherence += (coh - fqCoherence) * 0.12;
     fctx.fillStyle = "rgba(0,120,150,.35)";
-    fctx.fillRect(4, h - 6, w - 8, 2);
+    fctx.fillRect(4, h2 - 6, w - 8, 2);
     fctx.fillStyle = `rgba(0,230,255,${(0.5 + 0.5 * fqCoherence).toFixed(2)})`;
-    fctx.fillRect(4, h - 6, (w - 8) * fqCoherence, 2);
+    fctx.fillRect(4, h2 - 6, (w - 8) * fqCoherence, 2);
     fctx.strokeStyle = "rgba(0,255,255,.5)";
     fctx.lineWidth = 1;
     fctx.beginPath();
@@ -1817,7 +1821,7 @@
     fctx.lineTo(w, cy + 0.5);
     fctx.stroke();
     chaosMix += ((firing2 ? 1 : 0) - chaosMix) * (firing2 ? 0.14 : 0.08);
-    if (chaosMix > 0.01) drawChaos(w, h, cy);
+    if (chaosMix > 0.01) drawChaos(w, h2, cy);
   }
   var P = {
     diskStops: [
@@ -1971,11 +1975,11 @@
   });
   function drawOrb(t) {
     const O = CFG.splash.orb;
-    const w = orb.width, h = orb.height;
-    const o = { x: w / 2, y: h / 2 };
-    const r = Math.min(w, h) * 0.21 * (1 + Math.sin(t * 0.04) * O.breathe);
+    const w = orb.width, h2 = orb.height;
+    const o = { x: w / 2, y: h2 / 2 };
+    const r = Math.min(w, h2) * 0.21 * (1 + Math.sin(t * 0.04) * O.breathe);
     const g = octx;
-    g.clearRect(0, 0, w, h);
+    g.clearRect(0, 0, w, h2);
     const haloR = r * 4.2;
     const halo = g.createRadialGradient(o.x, o.y, r * 0.95, o.x, o.y, haloR);
     for (const [s, c] of P.haloStops) halo.addColorStop(s, c);
@@ -2716,10 +2720,10 @@
   }
   function place(rect2) {
     if (!docked || !rect2) return;
-    const pad2 = 10;
-    el2.style.left = rect2.left + pad2 + "px";
-    el2.style.top = rect2.top + pad2 + 12 + "px";
-    el2.style.width = Math.max(80, rect2.width - pad2 * 2) + "px";
+    const pad3 = 10;
+    el2.style.left = rect2.left + pad3 + "px";
+    el2.style.top = rect2.top + pad3 + 12 + "px";
+    el2.style.width = Math.max(80, rect2.width - pad3 * 2) + "px";
     el2.style.fontSize = Math.max(8.5, Math.min(14, rect2.width * 0.041)).toFixed(2) + "px";
   }
   function frame6(e) {
@@ -2746,20 +2750,20 @@
       trackDone = true;
       startTrack(CFG.track);
     }
-    let h = '<div class="tline login">' + clockLine() + "</div>";
-    h += '<div class="tline">' + CFG.prompt + "Welcome to " + CFG.domain + "</div>";
-    h += '<div class="tline">' + CFG.prompt;
-    if (e < OFF[iT]) h += '<span id="cursor"></span></div>';
-    else h += CFG.cmd.slice(0, n) + (e < OFF[iE] ? '<span id="cursor"></span>' : "") + "</div>";
+    let h2 = '<div class="tline login">' + clockLine() + "</div>";
+    h2 += '<div class="tline">' + CFG.prompt + "Welcome to " + CFG.domain + "</div>";
+    h2 += '<div class="tline">' + CFG.prompt;
+    if (e < OFF[iT]) h2 += '<span id="cursor"></span></div>';
+    else h2 += CFG.cmd.slice(0, n) + (e < OFF[iE] ? '<span id="cursor"></span>' : "") + "</div>";
     for (const s of CFG.subs) {
       const i = idx(s.at);
       if (i >= 0 && e >= OFF[i])
-        h += '<div class="tline sub">' + s.t.replace(/ok$/, '<span class="ok">ok</span>') + "</div>";
+        h2 += '<div class="tline sub">' + s.t.replace(/ok$/, '<span class="ok">ok</span>') + "</div>";
     }
     const iL = idx("LIVE");
     if (e >= OFF[iL] + CFG.beats[iL].ms - 1)
-      h += '<div class="tline">' + CFG.prompt + '<span id="cursor"></span></div>';
-    inner.innerHTML = h;
+      h2 += '<div class="tline">' + CFG.prompt + '<span id="cursor"></span></div>';
+    inner.innerHTML = h2;
   }
 
   // js/layout.js
@@ -3012,10 +3016,836 @@
     pctx.globalAlpha = 1;
   }
 
+  // js/apps/calendar.js
+  var calendar_exports = {};
+  __export(calendar_exports, {
+    mount: () => mount,
+    normalize: () => normalize,
+    occurrences: () => occurrences
+  });
+
+  // js/apps/ui.js
+  function h(spec, attrs, ...kids) {
+    const m = /^([a-z0-9]+)?((?:[.#][\w-]+)*)$/i.exec(spec) || [];
+    const el3 = document.createElement(m[1] || "div");
+    for (const part of (m[2] || "").match(/[.#][\w-]+/g) || []) {
+      if (part[0] === ".") el3.classList.add(part.slice(1));
+      else el3.id = part.slice(1);
+    }
+    if (attrs) for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === "text") el3.textContent = v;
+      else if (k === "style" && typeof v === "object") Object.assign(el3.style, v);
+      else if (k.startsWith("on") && typeof v === "function") el3.addEventListener(k.slice(2), v);
+      else if (k.startsWith("--")) el3.style.setProperty(k, v);
+      else el3.setAttribute(k, v === true ? "" : v);
+    }
+    for (const k of kids.flat()) if (k != null && k !== false) el3.append(k.nodeType ? k : String(k));
+    return el3;
+  }
+  function statusBar() {
+    const fill = h("i");
+    const text = h("span.app-status-text", { text: "booting\u2026" });
+    const el3 = h("div.app-status", { role: "status", "aria-live": "polite" }, h("span.app-status-bar", null, fill), text);
+    return {
+      el: el3,
+      set(msg, kind = "info", pct = null) {
+        el3.dataset.kind = kind;
+        text.textContent = msg;
+        if (pct !== null) fill.style.width = Math.max(0, Math.min(100, pct)) + "%";
+        if (kind === "err") console.error("[nh app]", msg);
+      }
+    };
+  }
+  async function loadJSON(url2) {
+    if (location.protocol === "file:") return { offline: true };
+    let res;
+    try {
+      res = await fetch(url2, { cache: "no-store" });
+    } catch (e) {
+      return { error: "fetch failed: " + e.message };
+    }
+    if (res.status === 404) return { missing: true };
+    if (!res.ok) return { error: url2 + ": HTTP " + res.status };
+    try {
+      return { data: JSON.parse(await res.text()) };
+    } catch (e) {
+      return { error: url2 + " is not valid JSON: " + e.message };
+    }
+  }
+  function jsonPicker(label, onData, onError) {
+    const input = h("input", { type: "file", accept: ".json,application/json", hidden: true });
+    input.addEventListener("change", async () => {
+      const f = input.files && input.files[0];
+      input.value = "";
+      if (!f) return;
+      try {
+        onData(JSON.parse(await f.text()), f.name);
+      } catch (e) {
+        onError(f.name + ": " + e.message);
+      }
+    });
+    return h("label.app-btn", { title: "Load a local " + label }, label, input);
+  }
+  var store = {
+    get(k, fallback) {
+      try {
+        const v = localStorage.getItem(k);
+        return v == null ? fallback : JSON.parse(v);
+      } catch (e) {
+        return fallback;
+      }
+    },
+    set(k, v) {
+      try {
+        localStorage.setItem(k, JSON.stringify(v));
+      } catch (e) {
+      }
+    },
+    del(k) {
+      try {
+        localStorage.removeItem(k);
+      } catch (e) {
+      }
+    }
+  };
+
+  // js/apps/calendar.js
+  var SOURCE = "data/schedule.json";
+  var DOW = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+  var DOW_LABEL = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  var MONTHS = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+  var WEEK_START = 0;
+  var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+  var TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+  function parseDate(s) {
+    const [y, m, d] = s.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d ? dt : null;
+  }
+  var pad = (n) => String(n).padStart(2, "0");
+  var keyOf = (d) => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  var addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+  function fmtTime(t) {
+    if (!t) return "";
+    let [hh, mm] = t.split(":").map(Number);
+    const ap = hh >= 12 ? "p" : "a";
+    hh = hh % 12 || 12;
+    return mm ? hh + ":" + pad(mm) + ap : hh + ap;
+  }
+  function rangeOf(e, sep = "\u2013") {
+    if (!e.start) return "all day";
+    if (!e.end || e.end === e.start) return fmtTime(e.start);
+    return fmtTime(e.start) + sep + fmtTime(e.end);
+  }
+  function normalize(data) {
+    const warn = [];
+    const cats = data && typeof data.categories === "object" && data.categories || {};
+    const common = (e, where) => {
+      if (!e.title) warn.push(where + ': missing "title"');
+      for (const f of ["start", "end"]) {
+        if (e[f] && !TIME_RE.test(e[f])) warn.push(where + ": " + f + ' "' + e[f] + '" is not HH:MM (24h)');
+      }
+      if (e.start && e.end && e.end < e.start) warn.push(where + ": end is before start");
+      if (e.category && !cats[e.category]) warn.push(where + ': unknown category "' + e.category + '"');
+    };
+    const recurring = [];
+    (Array.isArray(data.recurring) ? data.recurring : []).forEach((r, i) => {
+      const where = "recurring[" + i + '] "' + (r.title || "?") + '"';
+      common(r, where);
+      const from = DATE_RE.test(r.from || "") ? parseDate(r.from) : null;
+      const until = DATE_RE.test(r.until || "") ? parseDate(r.until) : null;
+      if (!from || !until) {
+        warn.push(where + ': needs valid "from" and "until" (YYYY-MM-DD) \u2014 skipped');
+        return;
+      }
+      if (until < from) {
+        warn.push(where + ': "until" is before "from" \u2014 skipped');
+        return;
+      }
+      const days = (r.days || []).map((d) => DOW.indexOf(d));
+      if (!days.length || days.includes(-1)) {
+        warn.push(where + ': "days" must use ' + DOW.join(", ") + " \u2014 skipped");
+        return;
+      }
+      const except = /* @__PURE__ */ new Set();
+      (r.except || []).forEach((x) => {
+        if (DATE_RE.test(x) && parseDate(x)) except.add(x);
+        else warn.push(where + ': bad except date "' + x + '"');
+      });
+      recurring.push(Object.assign({}, r, { _from: from, _until: until, _days: new Set(days), _except: except }));
+    });
+    const events = [];
+    (Array.isArray(data.events) ? data.events : []).forEach((e, i) => {
+      const where = "events[" + i + '] "' + (e.title || "?") + '"';
+      common(e, where);
+      const d = DATE_RE.test(e.date || "") ? parseDate(e.date) : null;
+      if (!d) {
+        warn.push(where + ': needs valid "date" (YYYY-MM-DD) \u2014 skipped');
+        return;
+      }
+      let end = d;
+      if (e.endDate) {
+        const ed = DATE_RE.test(e.endDate) ? parseDate(e.endDate) : null;
+        if (!ed || ed < d) warn.push(where + ': bad "endDate" \u2014 treated as single day');
+        else end = ed;
+      }
+      events.push(Object.assign({}, e, { _date: d, _end: end }));
+    });
+    return { meta: data.meta || {}, categories: cats, recurring, events, warnings: warn };
+  }
+  function occurrences(sched, hidden, start2, end) {
+    const map = /* @__PURE__ */ new Map();
+    const push = (d, ev) => {
+      const k = keyOf(d);
+      if (!map.has(k)) map.set(k, []);
+      map.get(k).push(ev);
+    };
+    for (const r of sched.recurring) {
+      if (hidden.has(r.category)) continue;
+      const stop2 = r._until < end ? r._until : end;
+      for (let d = r._from > start2 ? r._from : start2; d <= stop2; d = addDays(d, 1)) {
+        if (r._days.has(d.getDay()) && !r._except.has(keyOf(d))) push(d, r);
+      }
+    }
+    for (const e of sched.events) {
+      if (hidden.has(e.category)) continue;
+      const stop2 = e._end < end ? e._end : end;
+      for (let d = e._date > start2 ? e._date : start2; d <= stop2; d = addDays(d, 1)) push(d, e);
+    }
+    for (const list of map.values()) {
+      list.sort((a, b) => (a.start || "").localeCompare(b.start || "") || (a.title || "").localeCompare(b.title || ""));
+    }
+    return map;
+  }
+  function mount(root) {
+    const today = /* @__PURE__ */ new Date();
+    const st = {
+      year: today.getFullYear(),
+      month: today.getMonth(),
+      selected: keyOf(today),
+      sched: { categories: {}, recurring: [], events: [], meta: {} },
+      hidden: new Set(store.get("nh-cal-hidden", []))
+    };
+    const status = statusBar();
+    const title = h("h3.cal-month", { text: "\u2014" });
+    const warnBtn = h("button.app-btn.warn", { type: "button", hidden: true });
+    const warnList = h("pre.app-warnings", { hidden: true });
+    const dow = h("div.cal-dow");
+    const grid = h("div.cal-grid");
+    const legend = h("div.cal-legend");
+    const detailDate = h("h4.cal-detail-date", { text: "Select a day" });
+    const detailList = h("ol.cal-detail-list");
+    const picker = jsonPicker("LOAD JSON", (data, name) => apply(data, name), (msg) => status.set(msg, "err"));
+    picker.hidden = true;
+    const nav = (label, tip, fn) => h("button.app-btn", { type: "button", title: tip, onclick: fn, text: label });
+    const bar = h(
+      "div.app-bar",
+      null,
+      title,
+      h(
+        "div.app-actions",
+        null,
+        picker,
+        nav("\u25C0", "Previous month (\u2190)", () => go(-1)),
+        nav("TODAY", "Jump to today (T)", goToday),
+        nav("\u25B6", "Next month (\u2192)", () => go(1))
+      )
+    );
+    for (let i = 0; i < 7; i++) dow.append(h("div", { text: DOW_LABEL[(i + WEEK_START) % 7] }));
+    root.append(h(
+      "div.app.app-calendar",
+      null,
+      bar,
+      h("div.app-statusrow", null, status.el, warnBtn),
+      warnList,
+      h(
+        "div.cal-layout",
+        null,
+        h("section.cal-month-wrap", null, dow, grid, legend),
+        h("aside.cal-detail", null, detailDate, detailList)
+      )
+    ));
+    warnBtn.addEventListener("click", () => {
+      warnList.hidden = !warnList.hidden;
+    });
+    const colorOf = (e) => (st.sched.categories[e.category] || {}).color || "var(--cyan)";
+    function renderLegend() {
+      legend.replaceChildren();
+      for (const [key2, c] of Object.entries(st.sched.categories)) {
+        legend.append(h("button.cal-chip" + (st.hidden.has(key2) ? ".off" : ""), {
+          type: "button",
+          title: "Show / hide",
+          "--c": c.color,
+          text: c.label || key2,
+          onclick: () => {
+            st.hidden.has(key2) ? st.hidden.delete(key2) : st.hidden.add(key2);
+            store.set("nh-cal-hidden", [...st.hidden]);
+            renderLegend();
+            render();
+          }
+        }));
+      }
+    }
+    function render() {
+      title.textContent = MONTHS[st.month].toUpperCase() + " " + st.year;
+      const first = new Date(st.year, st.month, 1);
+      const gridStart = addDays(first, -((first.getDay() - WEEK_START + 7) % 7));
+      const gridEnd = addDays(gridStart, 41);
+      const occ2 = occurrences(st.sched, st.hidden, gridStart, gridEnd);
+      const todayKey = keyOf(/* @__PURE__ */ new Date());
+      const cells2 = [];
+      for (let i = 0; i < 42; i++) {
+        const d = addDays(gridStart, i), k = keyOf(d);
+        const list = occ2.get(k) || [];
+        const cls = "div.cal-cell" + (d.getMonth() !== st.month ? ".out" : "") + (k === todayKey ? ".today" : "") + (k === st.selected ? ".sel" : "");
+        const rows = list.length ? h("ul.cal-evs", null, list.map((e) => h(
+          "li.cal-ev" + (e.start ? "" : ".allday"),
+          { "--c": colorOf(e), title: [rangeOf(e), e.title, e.location].filter(Boolean).join(" \xB7 ") },
+          e.start ? h("span.ev-t", { text: fmtTime(e.start) }) : null,
+          h("span.ev-n", { text: e.title || "(untitled)" })
+        ))) : null;
+        cells2.push(h(cls, { "data-key": k, onclick: () => select(k, list) }, h("div.num", { text: d.getDate() }), rows));
+      }
+      grid.replaceChildren(...cells2);
+      if (st.selected) {
+        const sel = parseDate(st.selected);
+        if (sel >= gridStart && sel <= gridEnd) detail(st.selected, occ2.get(st.selected) || []);
+      }
+    }
+    function select(k, list) {
+      st.selected = k;
+      grid.querySelectorAll(".cal-cell.sel").forEach((c2) => c2.classList.remove("sel"));
+      const c = grid.querySelector('.cal-cell[data-key="' + k + '"]');
+      if (c) c.classList.add("sel");
+      detail(k, list);
+    }
+    function detail(k, list) {
+      const d = parseDate(k);
+      detailDate.textContent = DOW_LABEL[d.getDay()] + " " + MONTHS[d.getMonth()].slice(0, 3).toUpperCase() + " " + d.getDate() + ", " + d.getFullYear();
+      if (!list.length) {
+        detailList.replaceChildren(h("li.empty", { text: "Nothing scheduled." }));
+        return;
+      }
+      detailList.replaceChildren(...list.map((e) => h(
+        "li",
+        { "--c": colorOf(e) },
+        h("div.time", { text: rangeOf(e, " \u2013 ") }),
+        h("div.name", { text: e.title || "(untitled)" }),
+        [e.location, (st.sched.categories[e.category] || {}).label].filter(Boolean).length ? h("div.meta", { text: [e.location, (st.sched.categories[e.category] || {}).label].filter(Boolean).join(" \xB7 ") }) : null,
+        e.notes ? h("div.meta", { text: e.notes }) : null,
+        e.url ? h("a.meta", { href: e.url, target: "_blank", rel: "noopener", text: "link \u2197" }) : null
+      )));
+    }
+    function go(delta) {
+      const d = new Date(st.year, st.month + delta, 1);
+      st.year = d.getFullYear();
+      st.month = d.getMonth();
+      render();
+    }
+    function goToday() {
+      const t = /* @__PURE__ */ new Date();
+      st.year = t.getFullYear();
+      st.month = t.getMonth();
+      st.selected = keyOf(t);
+      render();
+    }
+    const onKey = (e) => {
+      if (e.target.closest && e.target.closest("input, textarea")) return;
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        go(-1);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        go(1);
+      } else if (e.key === "t" || e.key === "T") goToday();
+    };
+    addEventListener("keydown", onKey);
+    function apply(data, origin) {
+      status.set("validating entries\u2026", "info", 70);
+      const n = normalize(data);
+      st.sched = n;
+      warnBtn.hidden = !n.warnings.length;
+      warnBtn.textContent = n.warnings.length + " warning" + (n.warnings.length === 1 ? "" : "s");
+      warnList.textContent = n.warnings.join("\n");
+      n.warnings.forEach((w) => console.warn("[nh calendar]", w));
+      status.set("rendering\u2026", "info", 90);
+      renderLegend();
+      render();
+      const m = n.meta;
+      status.set(
+        (m.title ? m.title + " \xB7 " : "") + n.recurring.length + " recurring + " + n.events.length + " one-off" + (m.updated ? " \xB7 updated " + m.updated : "") + (origin ? " \xB7 " + origin : ""),
+        n.warnings.length ? "warn" : "ok",
+        100
+      );
+    }
+    (async () => {
+      render();
+      status.set("fetching " + SOURCE + "\u2026", "info", 20);
+      const r = await loadJSON(SOURCE);
+      if (r.data) {
+        status.set("parsing\u2026", "info", 45);
+        apply(r.data);
+        return;
+      }
+      picker.hidden = false;
+      if (r.offline) status.set("Opened from disk: browsers block reading " + SOURCE + " here. Use LOAD JSON, or serve the folder.", "warn", 100);
+      else if (r.missing) status.set(SOURCE + " not found in the repo", "err", 100);
+      else status.set(r.error, "err", 100);
+    })();
+    return function destroy() {
+      removeEventListener("keydown", onKey);
+    };
+  }
+
+  // js/apps/linkdock.js
+  var linkdock_exports = {};
+  __export(linkdock_exports, {
+    candidatesFor: () => candidatesFor,
+    mount: () => mount2,
+    normUrl: () => normUrl,
+    rank: () => rank
+  });
+  var SOURCE2 = "data/links.json";
+  var DRAFT_KEY = "nh-linkdock-draft-v1";
+  var PROBE_TIMEOUT_MS = 8e3;
+  function normUrl(raw) {
+    let s = (raw || "").trim();
+    if (!s || s[0] === "#") return null;
+    if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(s)) s = "https://" + s;
+    try {
+      const u = new URL(s);
+      if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+      if (!u.hostname.includes(".") && u.hostname !== "localhost") return null;
+      u.hash = "";
+      return u;
+    } catch (e) {
+      return null;
+    }
+  }
+  var bareHost = (u) => u.hostname.replace(/^www\./, "");
+  function candidatesFor(u) {
+    return [
+      { src: u.origin + "/apple-touch-icon.png", label: "site apple-touch-icon" },
+      { src: u.origin + "/favicon.ico", label: "site favicon.ico" },
+      { src: "https://icons.duckduckgo.com/ip3/" + u.hostname + ".ico", label: "DuckDuckGo" },
+      // Google returns a generic 16px globe for unknown domains — ranked last.
+      { src: "https://www.google.com/s2/favicons?domain=" + encodeURIComponent(u.hostname) + "&sz=128", label: "Google s2", weakAt: 16 }
+    ];
+  }
+  function probe(c) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const timer = setTimeout(() => {
+        img.src = "";
+        resolve(Object.assign({}, c, { ok: false }));
+      }, PROBE_TIMEOUT_MS);
+      img.onload = () => {
+        clearTimeout(timer);
+        const w = img.naturalWidth || 0;
+        resolve(Object.assign({}, c, { ok: w > 0, w, h: img.naturalHeight || 0, weak: !!(c.weakAt && w <= c.weakAt) }));
+      };
+      img.onerror = () => {
+        clearTimeout(timer);
+        resolve(Object.assign({}, c, { ok: false }));
+      };
+      img.referrerPolicy = "no-referrer";
+      img.src = c.src;
+    });
+  }
+  function rank(results) {
+    return results.filter((r) => r.ok).sort((a, b) => a.weak === b.weak ? Math.min(b.w, 256) - Math.min(a.w, 256) : a.weak ? 1 : -1);
+  }
+  function urlsFromDrop(dt) {
+    const out2 = [];
+    let title = "";
+    const list = dt.getData("text/uri-list");
+    if (list) out2.push(...list.split(/\r?\n/).filter((s) => s && s[0] !== "#"));
+    const moz = dt.getData("text/x-moz-url");
+    if (moz) {
+      const [u, t] = moz.split(/\r?\n/);
+      if (u && !out2.length) out2.push(u);
+      if (t) title = t;
+    }
+    const html = dt.getData("text/html");
+    if (html && !title) {
+      const a = new DOMParser().parseFromString(html, "text/html").querySelector("a[href]");
+      if (a) {
+        if (!out2.length) out2.push(a.href);
+        title = a.textContent.trim();
+      }
+    }
+    if (!out2.length) out2.push(...(dt.getData("text/plain") || "").split(/\s+/));
+    return { urls: out2, title: title.slice(0, 80) };
+  }
+  function mount2(root) {
+    let links = [];
+    let removed = /* @__PURE__ */ new Set();
+    let nextId = 1, qTotal = 0, qDone = 0;
+    const status = statusBar();
+    const tiles = h("ul.ld-tiles");
+    const urlIn = h("input.ld-input", { type: "text", placeholder: "https://example.com", autocomplete: "off", spellcheck: "false" });
+    const zone = h(
+      "section.ld-drop",
+      { tabindex: "0" },
+      h("p.ld-drop-main", { text: "Drag a link, a tab\u2019s address-bar icon, or a bookmark here" }),
+      h("p.ld-drop-sub", { text: "or paste (Ctrl+V) / type below \u2014 several URLs at once is fine" }),
+      h(
+        "form.ld-form",
+        { onsubmit: (e) => {
+          e.preventDefault();
+          add(urlIn.value.split(/\s+/));
+          urlIn.value = "";
+        } },
+        urlIn,
+        h("button.app-btn", { type: "submit", text: "ADD" })
+      )
+    );
+    const btn2 = (label, tip, fn) => h("button.app-btn", { type: "button", title: tip, onclick: fn, text: label });
+    root.append(h(
+      "div.app.app-linkdock",
+      null,
+      h(
+        "div.app-bar",
+        null,
+        h("h3", { text: "DROP A URL" }),
+        h(
+          "div.app-actions",
+          null,
+          jsonPicker(
+            "LOAD",
+            (data, name) => {
+              const n = ingest(data);
+              save();
+              status.set("loaded " + n + " new from " + name, "ok", 100);
+            },
+            (msg) => status.set(msg, "err")
+          ),
+          btn2("COPY JSON", "Copy links.json to the clipboard", copyJson),
+          btn2("EXPORT", "Download links.json \u2014 commit it as data/links.json", download),
+          btn2("CLEAR", "Remove every tile from this browser\u2019s draft", clearAll)
+        )
+      ),
+      h("div.app-statusrow", null, status.el),
+      zone,
+      tiles
+    ));
+    function tick2(label) {
+      const pct = qTotal ? Math.round(qDone / qTotal * 100) : 100;
+      status.set(qDone < qTotal ? "probing icons " + qDone + "/" + qTotal + " \u2014 " + label : links.length + " link" + (links.length === 1 ? "" : "s") + " \xB7 icons resolved", "info", pct);
+    }
+    function enqueue(list) {
+      if (!list.length) return;
+      qTotal += list.length;
+      tick2(list[0].host);
+      list.forEach((l) => resolve(l).finally(() => {
+        qDone++;
+        tick2(l.host);
+      }));
+    }
+    async function resolve(link) {
+      link.state = "probing";
+      draw2(link);
+      const ranked = rank(await Promise.all(candidatesFor(new URL(link.url)).map(probe)));
+      link.candidates = ranked;
+      if (!link.icon || link.auto) {
+        link.icon = ranked.length ? ranked[0].src : "";
+        link.iconSource = ranked.length ? ranked[0].label : "none found";
+        link.auto = true;
+      }
+      link.state = ranked.length ? "done" : "failed";
+      draw2(link);
+      save();
+    }
+    function make(u, title, icon, iconSource) {
+      return {
+        id: nextId++,
+        url: u.href,
+        host: bareHost(u),
+        title: title || bareHost(u),
+        icon: icon || "",
+        iconSource: iconSource || "",
+        candidates: [],
+        state: "done",
+        auto: !icon
+      };
+    }
+    function add(raw, titleHint) {
+      const fresh = [];
+      for (const r of raw) {
+        const u = normUrl(r);
+        if (!u) continue;
+        if (links.some((l2) => l2.url === u.href)) {
+          status.set("already docked: " + bareHost(u));
+          continue;
+        }
+        removed.delete(u.href);
+        const l = make(u, raw.length === 1 ? titleHint : "");
+        links.push(l);
+        fresh.push(l);
+      }
+      save();
+      enqueue(fresh);
+    }
+    function ingest(data) {
+      const arr = Array.isArray(data) ? data : data && Array.isArray(data.links) ? data.links : null;
+      if (!arr) throw new Error('expected {"links":[...]}');
+      const fresh = [];
+      for (const e of arr) {
+        const u = normUrl(e.url);
+        if (!u || links.some((l2) => l2.url === u.href) || removed.has(u.href)) continue;
+        const l = make(u, e.title, e.icon, e.iconSource);
+        links.push(l);
+        draw2(l);
+        if (!l.icon) fresh.push(l);
+      }
+      enqueue(fresh);
+      return arr.length;
+    }
+    function remove(id) {
+      const i = links.findIndex((l) => l.id === id);
+      if (i < 0) return;
+      removed.add(links[i].url);
+      links.splice(i, 1);
+      const el3 = tiles.querySelector('[data-id="' + id + '"]');
+      if (el3) el3.remove();
+      save();
+      tick2("");
+    }
+    function clearAll() {
+      if (!links.length || !confirm("Remove all " + links.length + " tiles from this browser\u2019s draft?")) return;
+      links.forEach((l) => removed.add(l.url));
+      links = [];
+      tiles.replaceChildren();
+      save();
+      status.set("cleared \u2014 data/links.json in the repo is untouched until you export and commit", "info", 100);
+    }
+    function iconBox(link) {
+      const ph = () => h("span.ph", { text: link.state === "probing" ? "\u2026" : (link.host[0] || "?").toUpperCase() });
+      const box2 = h("div.ld-icon");
+      if (link.icon) {
+        const img = h("img", { alt: "", referrerpolicy: "no-referrer", src: link.icon });
+        img.onerror = () => box2.replaceChildren(ph());
+        box2.append(img);
+      } else box2.append(ph());
+      return box2;
+    }
+    function draw2(link) {
+      let li = tiles.querySelector('[data-id="' + link.id + '"]');
+      if (!li) {
+        li = h("li.ld-tile", { "data-id": link.id });
+        tiles.append(li);
+      }
+      li.dataset.state = link.state;
+      const title = h("input.ld-title", { value: link.title, spellcheck: "false" });
+      title.addEventListener("change", () => {
+        link.title = title.value.trim() || link.host;
+        save();
+      });
+      const best = link.candidates.find((c) => c.src === link.icon);
+      const src2 = link.state === "probing" ? h("div.ld-src", { text: "probing\u2026" }) : h("div.ld-src", null, "icon: ", h("b", { text: link.iconSource || "\u2014" }), best && best.w ? " \xB7 " + best.w + "\xD7" + best.h + "px" : "");
+      const alts = link.candidates.length > 1 ? h("div.ld-alts", null, link.candidates.map((c) => h("button.ld-alt" + (c.src === link.icon ? ".on" : ""), {
+        type: "button",
+        title: c.label + " \xB7 " + c.w + "\xD7" + c.h,
+        onclick: () => {
+          link.icon = c.src;
+          link.iconSource = c.label;
+          link.auto = false;
+          draw2(link);
+          save();
+        }
+      }, h("img", { src: c.src, alt: "", referrerpolicy: "no-referrer" })))) : null;
+      li.replaceChildren(...[
+        h(
+          "div.ld-head",
+          null,
+          iconBox(link),
+          h("div.ld-text", null, title, h("a.ld-url", { href: link.url, target: "_blank", rel: "noopener", text: link.url }))
+        ),
+        src2,
+        alts,
+        h(
+          "div.ld-actions",
+          null,
+          link.icon ? h("button.app-btn", { type: "button", text: "SAVE ICON", title: "Download the selected icon", onclick: () => saveIcon(link) }) : null,
+          h("button.app-btn", { type: "button", text: "RE-PROBE", onclick: () => {
+            link.auto = true;
+            enqueue([link]);
+          } }),
+          h("button.app-btn.danger", { type: "button", text: "REMOVE", onclick: () => remove(link.id) })
+        )
+      ].filter(Boolean));
+    }
+    const EXT = {
+      "image/png": "png",
+      "image/x-icon": "ico",
+      "image/vnd.microsoft.icon": "ico",
+      "image/svg+xml": "svg",
+      "image/jpeg": "jpg",
+      "image/gif": "gif",
+      "image/webp": "webp"
+    };
+    async function saveIcon(link) {
+      status.set("fetching icon for " + link.host + "\u2026", "info", 40);
+      try {
+        const res = await fetch(link.icon, { mode: "cors", referrerPolicy: "no-referrer" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const blob = await res.blob();
+        const type = (blob.type || "").split(";")[0];
+        if (!type.startsWith("image/")) throw new Error("not an image (" + (type || "no type") + ")");
+        const fromUrl = (new URL(link.icon).pathname.match(/\.(png|ico|svg|jpe?g|gif|webp)$/i) || [])[1];
+        const ext = EXT[type] || (fromUrl || "png").toLowerCase();
+        const a = h("a", { href: URL.createObjectURL(blob), download: link.host.replace(/[^a-z0-9.-]/gi, "_") + "." + ext });
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1e3);
+        status.set("saved " + link.host + "." + ext + " (" + (blob.size / 1024).toFixed(1) + " KB)", "ok", 100);
+      } catch (e) {
+        window.open(link.icon, "_blank", "noopener");
+        status.set(link.host + "\u2019s server blocks direct download \u2014 opened the icon in a new tab: right-click \u2192 Save image as", "warn", 100);
+      }
+    }
+    const exportObj = () => ({
+      updated: (/* @__PURE__ */ new Date()).toISOString().slice(0, 10),
+      links: links.map((l) => ({ title: l.title, url: l.url, icon: l.icon, iconSource: l.iconSource }))
+    });
+    const exportText = () => JSON.stringify(exportObj(), null, 2) + "\n";
+    function save() {
+      store.set(DRAFT_KEY, { links: exportObj().links, removed: [...removed] });
+    }
+    function download() {
+      const a = h("a", { href: URL.createObjectURL(new Blob([exportText()], { type: "application/json" })), download: "links.json" });
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1e3);
+      status.set("exported " + links.length + " links \u2192 links.json (commit as data/links.json)", "ok", 100);
+    }
+    async function copyJson() {
+      try {
+        await navigator.clipboard.writeText(exportText());
+        status.set("links.json copied to clipboard", "ok", 100);
+      } catch (e) {
+        status.set("clipboard blocked \u2014 use EXPORT instead", "err");
+      }
+    }
+    let depth = 0;
+    const on2 = (ev) => {
+      ev.preventDefault();
+      depth++;
+      zone.classList.add("over");
+    };
+    const leave = () => {
+      if (--depth <= 0) {
+        depth = 0;
+        zone.classList.remove("over");
+      }
+    };
+    const over = (ev) => {
+      ev.preventDefault();
+      ev.dataTransfer.dropEffect = "copy";
+    };
+    const drop = (ev) => {
+      ev.preventDefault();
+      depth = 0;
+      zone.classList.remove("over");
+      const f = ev.dataTransfer.files && ev.dataTransfer.files[0];
+      if (f && /json$/i.test(f.name)) {
+        f.text().then((t) => {
+          const n = ingest(JSON.parse(t));
+          save();
+          status.set("loaded " + n + " from " + f.name, "ok", 100);
+        }).catch((e) => status.set(f.name + ": " + e.message, "err"));
+        return;
+      }
+      const { urls, title } = urlsFromDrop(ev.dataTransfer);
+      if (!urls.some(normUrl)) {
+        status.set("nothing URL-shaped in that drop", "err");
+        return;
+      }
+      add(urls, title);
+    };
+    const paste = (ev) => {
+      if (ev.target.closest && ev.target.closest("input, textarea")) return;
+      const t = ev.clipboardData.getData("text/plain");
+      if (t) add(t.split(/\s+/));
+    };
+    addEventListener("dragenter", on2);
+    addEventListener("dragleave", leave);
+    addEventListener("dragover", over);
+    addEventListener("drop", drop);
+    document.addEventListener("paste", paste);
+    (async () => {
+      const draft = store.get(DRAFT_KEY, null);
+      if (draft && Array.isArray(draft.removed)) removed = new Set(draft.removed);
+      status.set("fetching " + SOURCE2 + "\u2026", "info", 20);
+      const r = await loadJSON(SOURCE2);
+      try {
+        if (r.data) ingest(r.data);
+      } catch (e) {
+        status.set(SOURCE2 + ": " + e.message, "err");
+      }
+      if (r.error) status.set(r.error, "err");
+      const repo = links.length;
+      if (draft && Array.isArray(draft.links)) ingest({ links: draft.links });
+      const local = links.length - repo;
+      if (!qTotal) {
+        const parts = [r.offline ? "opened from disk (repo list not readable here \u2014 use LOAD)" : repo + " from " + SOURCE2];
+        if (local > 0) parts.push(local + " from unexported local draft");
+        status.set("ready \xB7 " + parts.join(" \xB7 ") + " \xB7 drop a URL", "ok", 100);
+      }
+    })();
+    return function destroy() {
+      removeEventListener("dragenter", on2);
+      removeEventListener("dragleave", leave);
+      removeEventListener("dragover", over);
+      removeEventListener("drop", drop);
+      document.removeEventListener("paste", paste);
+    };
+  }
+
+  // js/apps/index.js
+  var REGISTRY = { calendar: calendar_exports, linkdock: linkdock_exports };
+  var teardown2 = null;
+  var has = (id) => Object.prototype.hasOwnProperty.call(REGISTRY, id);
+  function open(id, root) {
+    close();
+    if (!has(id)) {
+      root.textContent = "Unknown tool: " + id;
+      return;
+    }
+    try {
+      teardown2 = REGISTRY[id].mount(root) || null;
+    } catch (e) {
+      console.error("[nh tools] " + id + " failed to mount:", e);
+      root.textContent = "This tool failed to start \u2014 see the console.";
+    }
+  }
+  function close() {
+    if (teardown2) {
+      try {
+        teardown2();
+      } catch (e) {
+        console.error("[nh tools] teardown:", e);
+      }
+    }
+    teardown2 = null;
+  }
+
   // js/deck.js
   var $2 = (s) => document.querySelector(s);
   var N = () => CFG.panels.length;
-  var pad = (n) => String(n + 1).padStart(2, "0");
+  var pad2 = (n) => String(n + 1).padStart(2, "0");
   var stage = null;
   var deck = null;
   var printer = null;
@@ -3024,6 +3854,7 @@
   var toggles = null;
   var cards = [];
   var placards = [];
+  var toolCards = [];
   var ang = 0;
   var vel = 0;
   var target2 = null;
@@ -3036,6 +3867,7 @@
   var live2 = false;
   var mini = false;
   var openIdx = -1;
+  var openTool = null;
   var pw = 200;
   var R = 160;
   var lastFace = -1;
@@ -3044,6 +3876,10 @@
     const k = keys[i];
     if (k && current() !== k) play(k);
   }
+  var GLYPH = {
+    calendar: '<svg class="g" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="12"/><path d="M1.5 6h13M5 1v3M11 1v3M4 9h2M7 9h2M10 9h2M4 12h2M7 12h2"/></svg>',
+    link: '<svg class="g" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M6.5 9.5l3-3M7 4.5l1.6-1.6a2.6 2.6 0 0 1 3.7 3.7L10.7 8.2M9 11.5l-1.6 1.6a2.6 2.6 0 0 1-3.7-3.7L5.3 7.8"/></svg>'
+  };
   function init7() {
     stage = $2("#deck-stage");
     deck = $2("#deck");
@@ -3056,12 +3892,12 @@
       c.className = "placard";
       c.setAttribute("role", "button");
       c.tabIndex = -1;
-      c.innerHTML = '<span class="n">' + pad(i) + '</span><span class="l">' + p2.label + '</span><span class="b">' + p2.blurb + "</span>";
+      c.innerHTML = '<span class="n">' + pad2(i) + '</span><span class="l">' + p2.label + '</span><span class="b">' + p2.blurb + "</span>";
       c.addEventListener("click", (ev) => {
         ev.stopPropagation();
         if (live2 && !mini && moved < 6) {
           speak(i);
-          open(i);
+          open2(i);
         }
       });
       deck.appendChild(c);
@@ -3069,10 +3905,10 @@
       const b = document.createElement("button");
       b.className = "card";
       b.type = "button";
-      b.innerHTML = '<span class="n">' + pad(i) + '</span><span class="l">' + p2.label + '</span><span class="b">' + p2.blurb + "</span>";
+      b.innerHTML = '<span class="n">' + pad2(i) + '</span><span class="l">' + p2.label + '</span><span class="b">' + p2.blurb + "</span>";
       b.addEventListener("click", () => {
         if (live2) {
-          if (mini) close();
+          if (mini) close2();
           swingTo(i);
         }
       });
@@ -3080,7 +3916,7 @@
         ev.preventDefault();
         if (live2) {
           speak(i);
-          open(i);
+          open2(i);
         }
       });
       b.addEventListener("mouseenter", () => {
@@ -3091,6 +3927,27 @@
       });
       top.appendChild(b);
       cards.push(b);
+    });
+    const T = CFG.tools || [];
+    top.style.setProperty("--tools", T.length);
+    if (T.length) {
+      const sep = document.createElement("span");
+      sep.className = "top-sep";
+      sep.setAttribute("aria-hidden", "true");
+      top.appendChild(sep);
+    }
+    T.forEach((t, i) => {
+      const b = document.createElement("button");
+      b.className = "card tool";
+      b.type = "button";
+      b.dataset.tool = t.id;
+      b.title = t.blurb;
+      b.innerHTML = '<span class="n">T' + (i + 1) + '</span><span class="l">' + (GLYPH[t.glyph] || "") + "<span>" + t.label + '</span></span><span class="b">' + t.blurb + "</span>";
+      b.addEventListener("click", () => {
+        if (live2) openToolById(t.id);
+      });
+      top.appendChild(b);
+      toolCards.push(b);
     });
     stage.addEventListener("pointerdown", (e) => {
       if (!live2 || mini) return;
@@ -3123,11 +3980,11 @@
     addEventListener("pointercancel", release);
     $2("#prev").addEventListener("click", () => step(-1));
     $2("#next").addEventListener("click", () => step(1));
-    $2("#view-close").addEventListener("click", close);
+    $2("#view-close").addEventListener("click", close2);
     addEventListener("keydown", (e) => {
       if (!live2) return;
       if (e.key === "Escape" && mini) {
-        close();
+        close2();
         return;
       }
       if (mini) return;
@@ -3167,7 +4024,7 @@
     printer.style.top = "calc(50% - " + lift + "px)";
     if (toggles) toggles.style.transform = "translateY(" + -lift + "px)";
   }
-  function sizeCards(w, h, lift) {
+  function sizeCards(w, h2, lift) {
     const D = CFG.deck || {};
     const P2 = D.perspective || 1400, RK = D.radius || 0.82, AR = D.aspect || 0.63;
     const M = D.margin || 14;
@@ -3178,19 +4035,19 @@
     if (toggles) toggles.style.setProperty("--ts", ts.toFixed(1) + "px");
     const TOG = ts * 4.6;
     if (mini) {
-      pw = Math.max(64, Math.min(w * 0.44, h * 0.72, 96));
+      pw = Math.max(64, Math.min(w * 0.44, h2 * 0.72, 96));
     } else {
       const fits = (c) => {
         const rad = c * RK;
         if (rad >= P2 * 0.85) return false;
         const sc = P2 / (P2 - rad);
         const halfW = c / 2 * sc, halfH = c * AR / 2 * sc;
-        if (halfH > h / 2 - lift - M) return false;
-        if (halfH > h / 2 - TOG - M) return false;
+        if (halfH > h2 / 2 - lift - M) return false;
+        if (halfH > h2 / 2 - TOG - M) return false;
         if (Math.max(rad + c * 0.25, halfW) > w / 2 - M) return false;
         return true;
       };
-      let lo = 48, hi = Math.max(64, Math.min(w, h) * 1.4);
+      let lo = 48, hi = Math.max(64, Math.min(w, h2) * 1.4);
       for (let i = 0; i < 30; i++) {
         const mid = (lo + hi) / 2;
         if (fits(mid)) lo = mid;
@@ -3230,49 +4087,99 @@
     if (!slot2) return;
     slot2.classList.toggle("hint", !!on2 && !mini);
   }
-  function open(i) {
-    const p2 = CFG.panels[i];
-    openIdx = i;
+  function dock3() {
     mini = true;
-    swingTo(i);
     stage.classList.add("mini");
     slot("L4").classList.add("filled");
     place2();
     dock();
-    view.querySelector(".n").textContent = pad(i);
-    view.querySelector("h2").textContent = p2.label;
-    const body = view.querySelector(".body");
-    const isPdf = p2.kind === "pdf" && p2.target;
-    view.classList.toggle("pdf", !!isPdf);
-    let html = p2.body || "";
-    if (isPdf) {
-      const dl = p2.download || p2.target.split("/").pop();
-      const pages = Array.isArray(p2.pages) ? p2.pages : [];
-      html += '<div class="pdf-bar"><a class="pdf-btn" href="' + p2.target + '" download="' + dl + '">Download PDF</a><a class="pdf-btn" href="' + p2.target + '" target="_blank" rel="noopener">Open in new tab</a></div><div class="pdf-frame">' + (pages.length ? '<div class="pdf-pages">' + pages.map((src2, n) => '<img src="' + src2 + '" alt="' + p2.label + ", page " + (n + 1) + '"' + (n ? ' loading="lazy"' : "") + ">").join("") + "</div>" : location.protocol === "file:" ? '<p class="pdf-note">No rendered pages are built yet, and from disk the browser will not draw a pdf inside the page. Use <b>Open in new tab</b> above, or run <code>tools/build.sh</code>.</p>' : '<iframe src="' + p2.target + '#view=FitH" title="' + p2.label + '" loading="lazy"></iframe>') + "</div>";
-    } else if (p2.kind === "stub") {
-      html += '<p style="color:var(--ink-dim)">Nothing wired to this slot yet. Define it in <code>docs/panels.csv</code> and <code>js/config.js</code>.</p>';
-    } else if (!html) {
-      html = "<p>" + p2.blurb + "</p>";
-    }
-    body.innerHTML = html;
+  }
+  function showView(num, title, cls) {
+    view.querySelector(".n").textContent = num;
+    view.querySelector("h2").textContent = title;
+    view.classList.remove("pdf", "app-host");
+    if (cls) view.classList.add(cls);
     view.classList.add("on");
     view.setAttribute("aria-hidden", "false");
     toggles.classList.remove("on");
     $2("#view-close").focus();
+    return view.querySelector(".body");
   }
-  function close() {
+  function clearView() {
+    close();
+    const body = view.querySelector(".body");
+    body.replaceChildren();
+    view.classList.remove("on", "pdf", "app-host");
+    view.setAttribute("aria-hidden", "true");
+  }
+  function setHash(id) {
+    const url2 = location.pathname + location.search + (id ? "#" + id : "");
+    try {
+      history.replaceState(null, "", url2);
+    } catch (e) {
+    }
+  }
+  var RENDER = {
+    pdf(p2) {
+      const dl = p2.download || p2.target.split("/").pop();
+      const pages = Array.isArray(p2.pages) ? p2.pages : [];
+      return (p2.body || "") + '<div class="pdf-bar"><a class="pdf-btn" href="' + p2.target + '" download="' + dl + '">Download PDF</a><a class="pdf-btn" href="' + p2.target + '" target="_blank" rel="noopener">Open in new tab</a></div><div class="pdf-frame">' + (pages.length ? '<div class="pdf-pages">' + pages.map((src2, n) => '<img src="' + src2 + '" alt="' + p2.label + ", page " + (n + 1) + '"' + (n ? ' loading="lazy"' : "") + ">").join("") + "</div>" : location.protocol === "file:" ? '<p class="pdf-note">No rendered pages are built yet, and from disk the browser will not draw a pdf inside the page. Use <b>Open in new tab</b> above, or run <code>tools/build.sh</code>.</p>' : '<iframe src="' + p2.target + '#view=FitH" title="' + p2.label + '" loading="lazy"></iframe>') + "</div>";
+    },
+    stub(p2) {
+      return (p2.body || "") + '<p style="color:var(--ink-dim)">Nothing wired to this slot yet. Define it in <code>docs/panels.csv</code> and <code>js/config.js</code>.</p>';
+    },
+    page(p2) {
+      return p2.body || "<p>" + p2.blurb + "</p>";
+    }
+  };
+  function open2(i) {
+    const p2 = CFG.panels[i];
+    clearView();
+    openIdx = i;
+    openTool = null;
+    swingTo(i);
+    dock3();
+    const isPdf = p2.kind === "pdf" && p2.target;
+    const body = showView(pad2(i), p2.label, isPdf ? "pdf" : "");
+    body.innerHTML = (RENDER[isPdf ? "pdf" : p2.kind] || RENDER.page)(p2);
+    markTools();
+    setHash("");
+  }
+  function openToolById(id) {
+    const t = (CFG.tools || []).find((x) => x.id === id);
+    if (!t || !has(id)) return false;
+    if (mini && openTool === id) return true;
+    clearView();
+    openIdx = -1;
+    openTool = id;
+    if (!mini) dock3();
+    const n = "T" + ((CFG.tools || []).indexOf(t) + 1);
+    open(id, showView(n, t.label, "app-host"));
+    markTools();
+    setHash(id);
+    return true;
+  }
+  function openToolFromHash() {
+    const id = decodeURIComponent(location.hash.slice(1));
+    return id ? openToolById(id) : false;
+  }
+  var hasTool = (id) => !!(CFG.tools || []).find((x) => x.id === id) && has(id);
+  function markTools() {
+    toolCards.forEach((b) => b.setAttribute("aria-current", b.dataset.tool === openTool ? "true" : "false"));
+  }
+  function close2() {
     if (!mini) return;
     mini = false;
     openIdx = -1;
+    openTool = null;
     stage.classList.remove("mini");
     slot("L4").classList.remove("filled");
-    view.classList.remove("on");
-    view.setAttribute("aria-hidden", "true");
-    view.querySelector(".body").innerHTML = "";
-    view.classList.remove("pdf");
+    clearView();
     toggles.classList.add("on");
     place2();
     mark(facing());
+    markTools();
+    setHash("");
     if (cards[0]) cards[Math.max(0, facing())].focus();
   }
   function boot(pDeck, pPrint, pCards, pLive) {
@@ -3340,9 +4247,11 @@
     }
   }
   function reset4() {
+    close();
     live2 = false;
     mini = false;
     openIdx = -1;
+    openTool = null;
     ang = 0;
     vel = 0;
     target2 = null;
@@ -3354,8 +4263,9 @@
     placeRetry = 0;
     const dockSlot = slot("L4");
     if (dockSlot) dockSlot.classList.remove("filled");
-    view.classList.remove("on");
-    view.setAttribute("aria-hidden", "true");
+    clearView();
+    markTools();
+    setHash("");
     toggles.classList.remove("on");
     printer.classList.remove("on");
     placards.forEach((c) => {
@@ -3368,13 +4278,12 @@
     if (!stage) return;
     mini = false;
     openIdx = -1;
+    openTool = null;
     stage.classList.remove("mini");
     const slot2 = slot("L4");
     if (slot2) slot2.classList.remove("filled");
-    if (view) {
-      view.classList.remove("on");
-      view.setAttribute("aria-hidden", "true");
-    }
+    if (view) clearView();
+    markTools();
     place2();
   }
   function jumpToLive() {
@@ -3587,10 +4496,10 @@
     });
     $3("#enterBtn").addEventListener("click", () => soundOn(true));
     $3("#enterBtn").addEventListener("click", fire2);
-    const dock3 = $3("#pelagic-dock");
-    dock3.style.cursor = "pointer";
-    dock3.setAttribute("aria-hidden", "false");
-    dock3.addEventListener("click", () => {
+    const dock4 = $3("#pelagic-dock");
+    dock4.style.cursor = "pointer";
+    dock4.setAttribute("aria-hidden", "false");
+    dock4.addEventListener("click", () => {
       if (act !== 1 && current() !== CFG.voice.cube) play(CFG.voice.cube);
     });
     $3("#back").addEventListener("click", backToSplash);
@@ -3619,10 +4528,17 @@
       seen = sessionStorage.getItem("nh_seen") === "1";
     } catch (e) {
     }
+    const deep = location.hash.length > 1 && hasTool(decodeURIComponent(location.hash.slice(1)));
     requestAnimationFrame(loop);
-    if (reduced2 || seen) {
-      requestAnimationFrame(() => requestAnimationFrame(skipToDesk));
+    if (reduced2 || seen || deep) {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        skipToDesk();
+        if (deep) setTimeout(() => openToolFromHash(), 120);
+      }));
     }
+    addEventListener("hashchange", () => {
+      if (act !== 1) openToolFromHash();
+    });
   }
   start();
   addEventListener("error", (e) => {

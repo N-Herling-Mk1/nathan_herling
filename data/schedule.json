@@ -1,0 +1,591 @@
+{
+  "meta": {
+    "title": "Fall 2026",
+    "updated": "2026-10-27"
+  },
+  "categories": {
+    "class": {
+      "label": "Class",
+      "color": "#00e5ff"
+    },
+    "lab": {
+      "label": "Lab",
+      "color": "#ffb000"
+    },
+    "exam": {
+      "label": "Exam",
+      "color": "#ff3d81"
+    },
+    "quiz": {
+      "label": "Quiz",
+      "color": "#b48cff"
+    },
+    "deadline": {
+      "label": "Deadline",
+      "color": "#e8230a"
+    },
+    "holiday": {
+      "label": "Holiday / term",
+      "color": "#7cff6b"
+    },
+    "research": {
+      "label": "Research",
+      "color": "#4f8cff"
+    },
+    "personal": {
+      "label": "Personal",
+      "color": "#c0c8cc"
+    }
+  },
+  "recurring": [
+    {
+      "title": "CHEM 181 lecture",
+      "days": [
+        "Mo",
+        "We",
+        "Fr"
+      ],
+      "start": "09:00",
+      "end": "09:50",
+      "from": "2026-08-24",
+      "until": "2026-12-10",
+      "location": "Commons 105",
+      "category": "class",
+      "except": [
+        "2026-09-07",
+        "2026-11-11",
+        "2026-11-27"
+      ]
+    },
+    {
+      "title": "INFO 579 SQL/NoSQL",
+      "days": [
+        "Mo",
+        "We"
+      ],
+      "start": "11:00",
+      "end": "12:15",
+      "from": "2026-08-24",
+      "until": "2026-12-10",
+      "location": "Modern Languages 205",
+      "category": "class",
+      "except": [
+        "2026-09-07",
+        "2026-11-11"
+      ],
+      "notes": "Room moved from Social Sciences 206 as of Aug 26"
+    },
+    {
+      "title": "MAT 231 Calc II",
+      "days": [
+        "Tu",
+        "Th"
+      ],
+      "start": "13:45",
+      "end": "15:30",
+      "from": "2026-08-24",
+      "until": "2026-12-15",
+      "location": "Pima NW, NWA A106",
+      "category": "class",
+      "except": [
+        "2026-11-26"
+      ]
+    },
+    {
+      "title": "INFO 555 Applied NLP",
+      "days": [
+        "Mo",
+        "We"
+      ],
+      "start": "15:30",
+      "end": "16:45",
+      "from": "2026-08-24",
+      "until": "2026-12-10",
+      "location": "M Pacheco ILC 125",
+      "category": "class",
+      "except": [
+        "2026-09-07",
+        "2026-11-11"
+      ]
+    },
+    {
+      "title": "CHEM 181 lab (001D)",
+      "days": [
+        "Tu"
+      ],
+      "start": "17:00",
+      "end": "19:50",
+      "from": "2026-08-24",
+      "until": "2026-12-10",
+      "location": "Koffler 561",
+      "category": "lab",
+      "except": []
+    }
+  ],
+  "events": [
+    {
+      "title": "MAT 231 Check-in Quiz review",
+      "date": "2026-09-01",
+      "start": "13:45",
+      "category": "quiz",
+      "notes": "In class"
+    },
+    {
+      "title": "MAT 231 HW Mod 0 Review",
+      "date": "2026-09-01",
+      "category": "deadline",
+      "start": "23:59",
+      "notes": "Schedule says 'Due Thur 9/1' but 9/1/2026 is a Tuesday \u2014 confirm"
+    },
+    {
+      "title": "MAT 231 HW 6.1 Areas between curves",
+      "date": "2026-09-03",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "Labor Day \u2014 no classes",
+      "date": "2026-09-07",
+      "category": "holiday"
+    },
+    {
+      "title": "Pima: drop/refund deadline (16-wk)",
+      "date": "2026-09-07",
+      "category": "deadline"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 1.1",
+      "date": "2026-09-08",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "MAT 231 HW 6.2 Volumes",
+      "date": "2026-09-08",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 HW 6.3 Cylindrical shells",
+      "date": "2026-09-08",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 HW 6.4 Work",
+      "date": "2026-09-10",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 1.2",
+      "date": "2026-09-15",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "MAT 231 HW 6.5 Average value",
+      "date": "2026-09-15",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 1.3",
+      "date": "2026-09-17",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "MAT 231 HW 7.7 Numerical integration",
+      "date": "2026-09-17",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 HW 7.8 Improper integrals",
+      "date": "2026-09-17",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 Exam 1",
+      "date": "2026-09-22",
+      "start": "13:45",
+      "end": "15:30",
+      "category": "exam",
+      "location": "Pima NW, NWA A106",
+      "notes": "Covers Ch. 6, 7.7-7.8"
+    },
+    {
+      "title": "MAT 231 HW 7.1 Integration by parts",
+      "date": "2026-09-29",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 2.1",
+      "date": "2026-10-01",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "MAT 231 HW 7.2 Trig integrals",
+      "date": "2026-10-01",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 HW 7.3 Trig substitution",
+      "date": "2026-10-01",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 HW 7.4 Partial fractions",
+      "date": "2026-10-06",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 2.2",
+      "date": "2026-10-08",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "MAT 231 HW 7.5 Strategy of integration",
+      "date": "2026-10-08",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 2.3",
+      "date": "2026-10-13",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "MAT 231 HW 8.1 Arc length",
+      "date": "2026-10-13",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 HW 8.3 Physics & engineering",
+      "date": "2026-10-13",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 Exam 2",
+      "date": "2026-10-15",
+      "start": "13:45",
+      "end": "15:30",
+      "category": "exam",
+      "location": "Pima NW, NWA A106",
+      "notes": "Covers 7.1-7.5, 8.1, 8.3"
+    },
+    {
+      "title": "MAT 231 HW 11.1 Sequences",
+      "date": "2026-10-22",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 3.1",
+      "date": "2026-10-27",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "INFO 579 Unit 9 assignment due",
+      "date": "2026-10-27",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 HW 11.2 Series",
+      "date": "2026-10-27",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 HW 11.3 Integral test",
+      "date": "2026-10-29",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 3.2",
+      "date": "2026-11-03",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "INFO 579 Unit 10 assignment due",
+      "date": "2026-11-03",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 HW 11.4 Comparison tests",
+      "date": "2026-11-03",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "CHEM 181 HW due",
+      "date": "2026-11-04",
+      "category": "deadline"
+    },
+    {
+      "title": "MAT 231 HW 11.5 Alternating series",
+      "date": "2026-11-05",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "CHEM 181 Lewis Structure Project due",
+      "date": "2026-11-06",
+      "category": "deadline",
+      "start": "23:59",
+      "notes": "D2L availability ends 11:59 PM"
+    },
+    {
+      "title": "INFO 579 Project 2: SQL Database due",
+      "date": "2026-11-08",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "Pima: withdrawal deadline (16-wk)",
+      "date": "2026-11-09",
+      "category": "deadline"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 3.3",
+      "date": "2026-11-10",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "INFO 579 Unit 11 assignment due",
+      "date": "2026-11-10",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 HW 11.6 Ratio & root tests",
+      "date": "2026-11-10",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "Veterans Day \u2014 no classes",
+      "date": "2026-11-11",
+      "category": "holiday"
+    },
+    {
+      "title": "MAT 231 HW 11.8 Power series",
+      "date": "2026-11-12",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "INFO 555 Programming 4: Sequence Processing due",
+      "date": "2026-11-13",
+      "category": "deadline",
+      "start": "23:59",
+      "notes": "Assignment + quiz (grad quiz too). Push notebook to GitHub, upload to D2L."
+    },
+    {
+      "title": "CHEM 181 HW due",
+      "date": "2026-11-16",
+      "category": "deadline"
+    },
+    {
+      "title": "MAT 231 HW 11.9 Functions as power series",
+      "date": "2026-11-17",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "CHEM 181 Midterm Exam 3",
+      "date": "2026-11-18",
+      "start": "09:00",
+      "category": "exam"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 3.4",
+      "date": "2026-11-19",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "MAT 231 HW 11.10 Taylor & Maclaurin",
+      "date": "2026-11-19",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "INFO 579 Unit 12 assignment due",
+      "date": "2026-11-22",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 Exam 3",
+      "date": "2026-11-24",
+      "start": "13:45",
+      "end": "15:30",
+      "category": "exam",
+      "location": "Pima NW, NWA A106",
+      "notes": "Covers Ch. 11"
+    },
+    {
+      "title": "Thanksgiving \u2014 no classes",
+      "date": "2026-11-26",
+      "category": "holiday",
+      "endDate": "2026-11-27"
+    },
+    {
+      "title": "INFO 579 Unit 13 assignment due",
+      "date": "2026-11-29",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "CHEM 181 HW due",
+      "date": "2026-11-30",
+      "category": "deadline"
+    },
+    {
+      "title": "MAT 231 HW 10.1 Parametric curves",
+      "date": "2026-12-03",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "INFO 555 Programming 5: Pre-trained LMs due",
+      "date": "2026-12-04",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "INFO 579 Unit 14 assignment due",
+      "date": "2026-12-06",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "CHEM 181 HW due",
+      "date": "2026-12-07",
+      "category": "deadline"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 4.1",
+      "date": "2026-12-08",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "MAT 231 HW 10.2 Calculus w/ parametric",
+      "date": "2026-12-08",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "CHEM 181 HW due",
+      "date": "2026-12-09",
+      "category": "deadline"
+    },
+    {
+      "title": "MAT 231 HW 10.3 Polar coordinates",
+      "date": "2026-12-10",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "Final exams week",
+      "date": "2026-12-11",
+      "category": "holiday",
+      "endDate": "2026-12-17"
+    },
+    {
+      "title": "INFO 579 Unit 15 assignment due",
+      "date": "2026-12-13",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "INFO 579 Project 3: NoSQL Database due",
+      "date": "2026-12-13",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "MAT 231 Check-in Quiz 4.2",
+      "date": "2026-12-15",
+      "start": "13:45",
+      "category": "quiz",
+      "location": "Pima NW, NWA A106",
+      "notes": "In class"
+    },
+    {
+      "title": "INFO 555 Final exam (online window)",
+      "date": "2026-12-15",
+      "start": "15:30",
+      "end": "17:30",
+      "category": "exam",
+      "notes": "Available 3:30 PM, due 5:30 PM; availability ends 11:59 PM"
+    },
+    {
+      "title": "MAT 231 HW 10.4 Calculus in polar",
+      "date": "2026-12-15",
+      "category": "deadline",
+      "start": "23:59"
+    },
+    {
+      "title": "Pima: 16-wk classes end",
+      "date": "2026-12-17",
+      "category": "holiday"
+    },
+    {
+      "title": "CHEM 181 Final Exam",
+      "date": "2026-12-17",
+      "start": "10:30",
+      "category": "exam"
+    },
+    {
+      "title": "MAT 231 Final Exam (cumulative)",
+      "date": "2026-12-17",
+      "start": "13:45",
+      "end": "15:30",
+      "category": "exam",
+      "location": "Pima NW, NWA A106",
+      "notes": "Covers Cumulative, weighted to Ch. 10. Time not listed \u2014 class slot assumed, confirm"
+    }
+  ]
+}
