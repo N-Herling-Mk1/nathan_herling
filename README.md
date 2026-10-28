@@ -6,7 +6,7 @@ Static front end. No framework, no runtime dependency, no server. Open
 The splash and desk fetch nothing at runtime: the signature vectors, the spark
 cue and the two font families are all compiled into the page, so there is no
 request to fail on a `file://` origin. The one exception is the tools (Calendar,
-Link Dock), which read their JSON from `data/` — over HTTP that is fetched fresh,
+Link Dock, Gallery, Week), which read their JSON from `data/` — over HTTP that is fetched fresh,
 from disk they offer a file picker instead. See `docs/apps.md`. Serving it over
 HTTP:
 
@@ -34,11 +34,12 @@ under `js/`, `assets/data/`, `assets/audio/` or `assets/fonts/`.
     assets/brand/       the NH mark + make_icons.py to regenerate the ladder
     assets/fonts/       self-hosted Orbitron + Share Tech Mono
     assets/og/          social card images
-    tools/              build.sh, og-card.html + make-og.py, fetch_icons.py
+    tools/              build.sh, og-card.html + make-og.py, fetch_icons.py, build_gallery.py
     assets/data/        signature vector data, traced from the ink scan
     assets/audio/       splash spark cue, charged-bed loop, and their source wavs
     assets/cv/          CV pdf, embedded by deck face 1
     assets/linkicons/   icons pulled by tools/fetch_icons.py for the Link Dock
+    assets/gallery/     one folder per Gallery album, plus generated _thumbs/
 
 ## The five acts
 
@@ -71,6 +72,9 @@ Acts 2 and 3 run as one continuous timeline off a single `t0`.
 | `apps/index.js` | tool registry: id → `mount(root) → destroy()` |
 | `apps/calendar.js` | T1 — month grid from `data/schedule.json` |
 | `apps/linkdock.js` | T2 — drop a URL, resolve its icon, export `data/links.json` |
+| `apps/gallery.js` | T3 — image viewer over `data/gallery.json`, albums in `assets/gallery/` |
+| `apps/planner.js` | T4 — weekly class planner over `data/planner.json` |
+| `apps/courses.js` | shared course catalog: validation, time parsing, clash check, course card |
 | `apps/ui.js` | shared by the tools: element builder, status bar, JSON loader |
 
 Everything tunable for act 1 sits under `CFG.splash` in `js/config.js`: cut and

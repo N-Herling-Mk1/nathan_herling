@@ -5,8 +5,10 @@
 
 import * as calendar from './calendar.js';
 import * as linkdock from './linkdock.js';
+import * as gallery  from './gallery.js';
+import * as planner  from './planner.js';
 
-const REGISTRY = { calendar, linkdock };
+const REGISTRY = { calendar, linkdock, gallery, planner };
 
 let teardown = null;
 

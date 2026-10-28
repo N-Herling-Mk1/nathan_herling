@@ -1,3 +1,5 @@
 slot,id,label,code,data,status
 T1,calendar,Calendar,js/apps/calendar.js,data/schedule.json,live
 T2,linkdock,Link Dock,js/apps/linkdock.js,data/links.json,live
+T3,gallery,Gallery,js/apps/gallery.js,data/gallery.json + assets/gallery/,live
+T4,planner,Week,js/apps/planner.js,data/planner.json + data/gallery.json,live

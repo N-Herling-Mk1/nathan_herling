@@ -1,0 +1,847 @@
+{
+  "updated": "2026-10-28",
+  "albums": [
+    {
+      "id": "spring-2027",
+      "title": "Spring 2027 — classes",
+      "notes": "Spring 2027 (1/13/27 – 5/5/27) course options. Screenshots are grouped by course; each course card pairs the section listings with the class details and enrollment requirements.",
+      "groups": [
+        {
+          "id": "math-355",
+          "code": "MATH 355",
+          "name": "Analysis of Ordinary Differential Equations",
+          "units": "3",
+          "career": "Undergraduate",
+          "grading": "Regular Grades A, B, C, D, E",
+          "components": "Lecture Required",
+          "session": "Regular Academic Session",
+          "mode": "In Person",
+          "campus": "University of Arizona – Main, Tucson",
+          "description": "Linear and nonlinear equations; basic solution techniques; qualitative and numerical methods; systems of equations; computer studies; applications drawn from physical, biological and social sciences.",
+          "requirements": "(Math 215 or 313) and (Math 129 or 223).",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "42335",
+              "status": "Open w/ Req",
+              "days": "TuTh",
+              "time": "9:30AM - 10:45AM",
+              "room": "Psychology, Rm 207",
+              "instructor": "To be Announced",
+              "dates": "1/13/27 – 5/5/27"
+            },
+            {
+              "section": "002",
+              "type": "Lecture",
+              "classNo": "42429",
+              "status": "Open w/ Req",
+              "days": "TuTh",
+              "time": "8:00AM - 9:15AM",
+              "room": "Biol Sci West, Rm 219",
+              "instructor": "To be Announced",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": "Section 002's screenshot has no course header; filed under MATH 355 because it came right after 355-001."
+        },
+        {
+          "id": "math-424",
+          "code": "MATH 424",
+          "name": "Theory of Complex Variables",
+          "units": "3",
+          "career": "Undergraduate",
+          "grading": "Regular Grades A, B, C, D, E",
+          "components": "Lecture Required",
+          "session": "Regular Academic Session",
+          "mode": "In Person",
+          "campus": "University of Arizona – Main, Tucson",
+          "description": "Complex numbers, analytic functions, harmonic functions, elementary functions, complex integration, Cauchy's integral theorem, series representations for analytic functions, residue theory, conformal mapping, applications.",
+          "requirements": "MATH 250B, 254 or 355.",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "42340",
+              "status": "Open w/ Req",
+              "days": "TuTh",
+              "time": "2:00PM - 3:15PM",
+              "room": "Psychology, Rm 207",
+              "instructor": "To be Announced",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": ""
+        },
+        {
+          "id": "math-464",
+          "code": "MATH 464",
+          "name": "Theory of Probability",
+          "units": "3",
+          "career": "Undergraduate",
+          "grading": "Regular Grades A, B, C, D, E",
+          "components": "Lecture Required",
+          "session": "Regular Academic Session",
+          "mode": "In Person",
+          "campus": "University of Arizona – Main, Tucson",
+          "description": "Probability spaces, random variables, weak law of large numbers, central limit theorem, various discrete and continuous probability distributions.",
+          "requirements": "(MATH 223 and MATH 323) or (MATH 223 and MATH 313 and MATH/DATA 363).",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "42425",
+              "status": "Open w/ Req",
+              "days": "TuTh",
+              "time": "9:30AM - 10:45AM",
+              "room": "Psychology, Rm 305",
+              "instructor": "To be Announced",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": ""
+        },
+        {
+          "id": "ece-425",
+          "code": "ECE 425",
+          "name": "Introduction to Deep Learning: An Engineering Perspective",
+          "career": "Undergraduate",
+          "mode": "In Person",
+          "units": "3",
+          "grading": "Regular Grades A, B, C, D, E",
+          "components": "Lecture Required",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "description": "Deep Learning is revolutionizing artificial intelligence tasks such as language understanding, speech and image recognition, machine translation, autonomous driving, etc. This transformative impact of deep learning, which tries to model the neural networks in brains, was recognized with Nobel Prizes in 2024 and Turing Award in 2018. This course provides a comprehensive introduction to deep neural networks with a focus on underlying principles and engineering applications. Students will explore the fundamental concepts, optimization techniques, and software tools of deep learning starting from the basics of perceptron and progressing to advanced neural network models with convolutions and attentions. The course emphasizes an engineering perspective, hands-on learning, and integrating theory with practice. The course also introduces latest methods to enhance the efficiency of training and inference in deep learning models and systems. Designed for students from diverse engineering disciplines, this course aims to equip them with the skills and knowledge to effectively apply deep learning in their respective fields.",
+          "requirements": "Adv Stdg: Engineering. ECE 201, ECE 310, MATH 125 or MATH 122B.",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "61879",
+              "status": "Open w/ Req",
+              "days": "MoWeFr",
+              "time": "2:00PM - 2:50PM",
+              "room": "R P Harvill Bldg, Rm 404",
+              "instructor": "Huanrui Yang",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": ""
+        },
+        {
+          "id": "ece-455",
+          "code": "ECE 455",
+          "name": "Introduction to Quantum Mechanics and Quantum Information Processing",
+          "career": "Undergraduate",
+          "mode": "In Person",
+          "units": "3",
+          "grading": "Regular Grades A, B, C, D, E",
+          "components": "Lecture Required",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "description": "This course is a self-contained introduction to quantum mechanics, quantum information, and quantum computing. The course starts with basics of linear spaces, including basis vectors, Gram-Schmidt procedure, Dirac algebra, Hermitian conjugation, eigenvalues and eigenvectors, and commutator. It continues with the principles of quantum mechanics including photon polarization, state vectors, operators, density operators, measurements, and dynamics of a quantum system, spin-1/2 systems and entanglement. The next chapter is devoted fundamentals of quantum computing, including single qubit gates, multiple qubit gates, controlled operations and universal quantum gates. Further, after introduction of quantum parallelism, important quantum algorithms are studied such as Deutsch's and Deutsch-Jozsa algorithms, Grover search algorithm and quantum Fourier transform. The next chapter will be devoted to physical realization of quantum information processing including nuclear magnetic resonance, ion traps, photonic realization, cavity quantum electrodynamics, and quantum dots. We then study various applications of quantum information processing including quantum teleportation, superdense coding and quantum cryptography. Course concludes with various quantum channel models and basics of quantum error correction. As a dual numbered course, the graduate level version will include more challenging homework problem sets and exam problems, as well as a comprehensive course project.",
+          "requirements": "Advanced Standing in Engineering. MATH 254 and ECE 275 and (ECE 207 or ECE 220) and ECE 310.",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "67102",
+              "status": "Open w/ Req",
+              "days": "MoWeFr",
+              "time": "11:00AM - 11:50AM",
+              "room": "Education, Rm 240",
+              "instructor": "Narayanan Rengaswamy",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "same": [
+            "ece-555"
+          ],
+          "notes": "Dual-numbered with ECE 555 (graduate version): same room, time and instructor."
+        },
+        {
+          "id": "ece-555",
+          "code": "ECE 555",
+          "name": "Introduction to Quantum Mechanics and Quantum Information Processing",
+          "career": "Graduate",
+          "mode": "In Person",
+          "units": "3",
+          "grading": "Regular Grades A, B, C, D, E",
+          "components": "Lecture Required",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "description": "This course is a self-contained introduction to quantum mechanics, quantum information, and quantum computing. The course starts with basics of linear spaces, including basis vectors, Gram-Schmidt procedure, Dirac algebra, Hermitian conjugation, eigenvalues and eigenvectors, and commutator. It continues with the principles of quantum mechanics including photon polarization, state vectors, operators, density operators, measurements, and dynamics of a quantum system, spin-1/2 systems and entanglement. The next chapter is devoted fundamentals of quantum computing, including single qubit gates, multiple qubit gates, controlled operations and universal quantum gates. Further, after introduction of quantum parallelism, important quantum algorithms are studied such as Deutsch's and Deutsch-Jozsa algorithms, Grover search algorithm and quantum Fourier transform. The next chapter will be devoted to physical realization of quantum information processing including nuclear magnetic resonance, ion traps, photonic realization, cavity quantum electrodynamics, and quantum dots. We then study various applications of quantum information processing including quantum teleportation, superdense coding and quantum cryptography. Course concludes with various quantum channel models and basics of quantum error correction. As a dual numbered course, the graduate level version will include more challenging homework problem sets and exam problems, as well as a comprehensive course project.",
+          "requirements": "",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "67103",
+              "status": "Open",
+              "days": "MoWeFr",
+              "time": "11:00AM - 11:50AM",
+              "room": "Education, Rm 240",
+              "instructor": "Narayanan Rengaswamy",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "same": [
+            "ece-455"
+          ],
+          "notes": "Graduate version of ECE 455 — harder problem sets and exams, plus a comprehensive course project. Enrollment requirements are not visible in the screenshot."
+        },
+        {
+          "id": "ece-508",
+          "code": "ECE 508",
+          "name": "Agent-Based Simulation",
+          "career": "Graduate",
+          "mode": "Fully Online",
+          "units": "3",
+          "grading": "Regular Grades A, B, C, D, E",
+          "components": "Lecture Required",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "description": "This course will introduce the student to: the concept of agents and multi-agent systems; the main issues in the theory and practice of multi-agent systems; the design of multi-agent systems; contemporary platforms for implementing agents and multi-agent systems; artificial life, artificial societies, N-person games. Upon completing this course, the students will understand: the notion of an agent; how agents are different from other software paradigms; the key issues associated with constructing agents, building and implementing models; the main approaches to developing agent-based simulation systems; the types of multi-agent interactions possible in such systems; the main application areas of agent-based simulation. Most importantly, they will be able to develop meaningful agent-based systems. Graduate-level requirements include completion of more sophisticated projects than undergraduates.",
+          "requirements": "",
+          "classNotes": "**Course Requisites: A good command of at least one programming language.",
+          "attributes": "GIDP: Cognitive Science (COGS)",
+          "sections": [
+            {
+              "section": "201",
+              "type": "Lecture",
+              "classNo": "66852",
+              "status": "Open",
+              "days": "",
+              "time": "",
+              "room": "Online",
+              "instructor": "Bo Liu",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": "Fully online, no scheduled meeting time — cannot clash."
+        },
+        {
+          "id": "ece-546",
+          "code": "ECE 546",
+          "name": "Semiconductor Processing",
+          "career": "Graduate",
+          "mode": "In Person",
+          "units": "3",
+          "grading": "Regular Grades A, B, C, D, E",
+          "components": "Lecture Required",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "description": "Silicon and compound semiconductor materials preparation, bulk crystal growth, wafering, epitaxial growth, photolithography, doping, ion implantation, etching, oxidation, metallization, silicon and compound semiconductor device processing. Graduate-level requirements include an additional research paper requiring independent research.",
+          "requirements": "",
+          "attributes": "Cross Listed",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "67609",
+              "status": "Open",
+              "days": "MoWeFr",
+              "time": "10:00AM - 10:50AM",
+              "room": "R P Harvill Bldg, Rm 302",
+              "instructor": "Xiaodong Yan",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": "Cross-listed; the screenshot doesn't say with which department."
+        },
+        {
+          "id": "ece-523",
+          "code": "ECE 523",
+          "name": "Engineering Applications of Machine Learning and Data Analytics",
+          "mode": "In Person",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "47946",
+              "status": "Open w/ Req",
+              "days": "MoWeFr",
+              "time": "10:00AM - 10:50AM",
+              "room": "Economics, Rm 303",
+              "instructor": "Xiaolong Ma",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": "Only the section listing was captured — units, career level, description and requirements are not in the screenshot."
+        },
+        {
+          "id": "chem-182",
+          "code": "CHEM 182",
+          "name": "Majors General Chemistry II",
+          "mode": "In Person",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "55043",
+              "status": "Open w/ Req",
+              "days": "MoWeFr",
+              "time": "9:00AM - 9:50AM",
+              "room": "The Commons, Rm 105",
+              "instructor": "Steven Schwartz",
+              "dates": "1/13/27 – 5/5/27"
+            },
+            {
+              "section": "001A",
+              "type": "Laboratory",
+              "classNo": "55050",
+              "status": "Open w/ Req",
+              "days": "Tu",
+              "time": "8:00AM - 10:50AM",
+              "room": "Henry Koffler Bldg, Rm 561",
+              "instructor": "Mark Yanagihashi",
+              "dates": "1/13/27 – 5/5/27"
+            },
+            {
+              "section": "001B",
+              "type": "Laboratory",
+              "classNo": "55058",
+              "status": "Open w/ Req",
+              "days": "Tu",
+              "time": "11:00AM - 1:50PM",
+              "room": "Henry Koffler Bldg, Rm 561",
+              "instructor": "Mark Yanagihashi",
+              "dates": "1/13/27 – 5/5/27"
+            },
+            {
+              "section": "001C",
+              "type": "Laboratory",
+              "classNo": "55059",
+              "status": "Open w/ Req",
+              "days": "Tu",
+              "time": "2:00PM - 4:50PM",
+              "room": "Henry Koffler Bldg, Rm 561",
+              "instructor": "Mark Yanagihashi",
+              "dates": "1/13/27 – 5/5/27"
+            },
+            {
+              "section": "001F",
+              "type": "Laboratory",
+              "classNo": "55062",
+              "status": "Open w/ Req",
+              "days": "We",
+              "time": "2:00PM - 4:50PM",
+              "room": "Henry Koffler Bldg, Rm 561",
+              "instructor": "Mark Yanagihashi",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": "Lecture 001 plus one lab. Labs 001D and 001E were not in the screenshots. The lab screenshots carry no course header; filed under CHEM 182 because they followed its lecture. Only the section listing was captured — units, career level, description and requirements are not in the screenshot."
+        },
+        {
+          "id": "chem-480b",
+          "code": "CHEM 480B",
+          "name": "Physical Chemistry",
+          "mode": "In Person",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "41797",
+              "status": "Open w/ Req",
+              "days": "MoWeFr",
+              "time": "10:00AM - 10:50AM",
+              "room": "Spch & Hearing Sci, Rm 205",
+              "instructor": "Michael Brown",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": "Only the section listing was captured — units, career level, description and requirements are not in the screenshot."
+        },
+        {
+          "id": "chem-485",
+          "code": "CHEM 485",
+          "name": "Advanced Physical Chemistry",
+          "mode": "In Person",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "69514",
+              "status": "Open w/ Req",
+              "days": "MoWeFr",
+              "time": "10:00AM - 10:50AM",
+              "room": "Henry Koffler Bldg, Rm 204",
+              "instructor": "Steven Schwartz",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": "Only the section listing was captured — units, career level, description and requirements are not in the screenshot."
+        },
+        {
+          "id": "phys-472",
+          "code": "PHYS 472",
+          "name": "Quantum Theory II",
+          "mode": "In Person",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "43900",
+              "status": "Open w/ Req",
+              "days": "MoWeFr",
+              "time": "9:00AM - 9:50AM",
+              "room": "Phys-Atmos Sci, Rm 224",
+              "instructor": "Stefan Meinel",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": "Only the section listing was captured — units, career level, description and requirements are not in the screenshot."
+        },
+        {
+          "id": "mse-507",
+          "code": "MSE 507",
+          "name": "Quantum Materials",
+          "units": "3",
+          "career": "Graduate",
+          "mode": "In Person",
+          "grading": "Regular Grades A, B, C, D, E",
+          "components": "Lecture Required",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "description": "This course explores the physics and materials science of quantum materials whose properties are governed by quantum mechanical effects beyond classical descriptions. Topics include topological insulators, superconductors, 2D materials, strongly correlated systems, and emergent quasiparticles. Emphasis is placed on understanding the relationship between atomic structure, electronic band topology, and collective excitations. Students will also explore materials design principles and experimental techniques used to fabricate and characterize quantum materials. Through case studies and research-driven discussions, students will gain a foundation to critically analyze and contribute to advances in quantum materials science for electronic, photonic, and quantum information applications.",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "67683",
+              "status": "Open",
+              "days": "Tu",
+              "time": "3:30PM - 6:00PM",
+              "room": "Economics, Rm 308",
+              "instructor": "Brian Kim",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "classNotes": "**Course Requisites: A course in sold state physics is recommended."
+        },
+        {
+          "id": "phys-560b",
+          "code": "PHYS 560B",
+          "name": "Condensed Matter Physics",
+          "units": "3",
+          "career": "Graduate",
+          "mode": "In Person",
+          "grading": "Regular Grades A, B, C, D, E",
+          "components": "Lecture Required",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "description": "Continuation of PHYS 560A, including a comprehensive selection of the following topics: microscopic theories of magnetism and superconductivity; metal-insulator transitions; broken symmetries and order parameters; surfaces and interfaces; nanostructures and quantum transport; membranes; polymers; liquid crystals; hydrodynamics; complex fluids; novel materials.",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "67983",
+              "status": "Open",
+              "days": "MoWeFr",
+              "time": "2:00PM - 2:50PM",
+              "room": "Phys-Atmos Sci, Rm 414",
+              "instructor": "Charles Stafford",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": "Only the class-details page was captured (no section listing).",
+          "classNotes": "**Course Requisites: PHYS 560A.",
+          "availability": "Capacity 20 · enrolled 0 · 20 seats available · wait list 0 of 0"
+        },
+        {
+          "id": "phys-565",
+          "code": "PHYS 565",
+          "name": "Quantum Materials and Quantum Devices",
+          "units": "3",
+          "career": "Graduate",
+          "mode": "In Person",
+          "grading": "Regular Grades A, B, C, D, E",
+          "components": "Lecture Required",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "description": "This course explores the foundational principles and future potential of quantum science in semiconductor technology. Students will gain a solid understanding of key quantum physics concepts and how they underpin modern and emerging device architectures. The course examines essential quantum materials and devices, emphasizing their unique properties, fabrication techniques, and characterization methods. Through case studies and real-world examples, students will explore how these quantum-enabled innovations are shaping the next generation of semiconductor technologies.",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "68058",
+              "status": "Open",
+              "days": "MoWeFr",
+              "time": "10:00AM - 10:50AM",
+              "room": "Phys-Atmos Sci, Rm 414",
+              "instructor": "Weigang Wang, Tai Kong, Brian LeRoy, John Schaibley",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": "Only the class-details page was captured (no section listing).",
+          "classNotes": "**Course Requisites: Students are expected to have a solid background in quantum mechanics and condensed matter physics. A graduate-level course in condensed matter physics (e.g., PHYS 560A) is recommended but not required.",
+          "availability": "Capacity 20 · enrolled 0 · 20 seats available · wait list 0 of 0"
+        },
+        {
+          "id": "phys-586",
+          "code": "PHYS 586",
+          "name": "Techniques in Particle Physics",
+          "mode": "In Person",
+          "session": "Regular Academic Session",
+          "campus": "University of Arizona – Main, Tucson",
+          "sections": [
+            {
+              "section": "001",
+              "type": "Lecture",
+              "classNo": "67985",
+              "status": "Open",
+              "days": "MoWeFr",
+              "time": "1:00PM - 1:50PM",
+              "room": "Social Sciences, Rm 307",
+              "instructor": "Kenneth Johns",
+              "dates": "1/13/27 – 5/5/27"
+            },
+            {
+              "section": "001A",
+              "type": "Laboratory",
+              "classNo": "68109",
+              "status": "Open",
+              "days": "Tu",
+              "time": "5:00PM - 7:50PM",
+              "room": "Phys-Atmos Sci, Rm 488",
+              "instructor": "To be Announced",
+              "dates": "1/13/27 – 5/5/27"
+            }
+          ],
+          "notes": "Lecture 001 and lab 001A are both components of the course, not alternatives. Only the section listing was captured — units, career level, description and requirements are not in the screenshot."
+        },
+        {
+          "id": "mat-262",
+          "code": "MAT 262",
+          "name": "Differential Equations",
+          "units": "3",
+          "mode": "In Person",
+          "session": "Regular Academic Session",
+          "campus": "Pima Community College",
+          "requirements": "Approval: none required (per the listing).",
+          "sections": [
+            {
+              "section": "22876",
+              "type": "Lecture",
+              "classNo": "22876",
+              "status": "Open",
+              "days": "MoWe",
+              "time": "9:45AM - 11:00AM",
+              "room": "Northwest Campus NWA A109",
+              "instructor": "Guajardo, J L",
+              "dates": "01/25 – 05/23"
+            },
+            {
+              "section": "20518",
+              "type": "Lecture",
+              "classNo": "20518",
+              "status": "Open",
+              "days": "TuTh",
+              "time": "11:15AM - 12:30PM",
+              "room": "Northwest Campus NWA A106",
+              "instructor": "Lindstedt, K I",
+              "dates": "01/21 – 05/23"
+            },
+            {
+              "section": "20586",
+              "type": "Lecture",
+              "classNo": "20586",
+              "status": "Open",
+              "days": "MoWe",
+              "time": "5:45PM - 7:00PM",
+              "room": "East Campus E3 305",
+              "instructor": "Leon, L A",
+              "dates": "01/25 – 05/23"
+            }
+          ],
+          "notes": "Pima CC, 3 credits, no fee, no-cost materials; seats 28/28, 28/28 and 30/30 available. Pima's term runs past UA's (to 05/23). Sections are listed by CRN. A section is cut off at the top of the screenshot — only its fee/materials row is visible.",
+          "school": "Pima"
+        }
+      ],
+      "images": [
+        {
+          "file": "assets/gallery/spring-2027/001_math-355-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/001_math-355-sec-001.webp",
+          "title": "MATH 355 · Section 001",
+          "caption": "Lecture 42335 · TuTh 9:30–10:45 AM · Psychology 207",
+          "w": 694,
+          "h": 445,
+          "group": "math-355"
+        },
+        {
+          "file": "assets/gallery/spring-2027/002_math-355-sec-002.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/002_math-355-sec-002.webp",
+          "title": "MATH 355 · Section 002",
+          "caption": "Lecture 42429 · TuTh 8:00–9:15 AM · Biol Sci West 219",
+          "w": 693,
+          "h": 414,
+          "group": "math-355"
+        },
+        {
+          "file": "assets/gallery/spring-2027/003_math-355-details.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/003_math-355-details.webp",
+          "title": "MATH 355 · Class details",
+          "caption": "3 units · requirements: (Math 215 or 313) and (Math 129 or 223)",
+          "w": 1096,
+          "h": 813,
+          "group": "math-355"
+        },
+        {
+          "file": "assets/gallery/spring-2027/004_math-424-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/004_math-424-sec-001.webp",
+          "title": "MATH 424 · Section 001",
+          "caption": "Lecture 42340 · TuTh 2:00–3:15 PM · Psychology 207",
+          "w": 691,
+          "h": 437,
+          "group": "math-424"
+        },
+        {
+          "file": "assets/gallery/spring-2027/005_math-424-details.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/005_math-424-details.webp",
+          "title": "MATH 424 · Class details",
+          "caption": "3 units · requirements: MATH 250B, 254 or 355",
+          "w": 1104,
+          "h": 818,
+          "group": "math-424"
+        },
+        {
+          "file": "assets/gallery/spring-2027/006_math-464-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/006_math-464-sec-001.webp",
+          "title": "MATH 464 · Section 001",
+          "caption": "Lecture 42425 · TuTh 9:30–10:45 AM · Psychology 305",
+          "w": 711,
+          "h": 488,
+          "group": "math-464"
+        },
+        {
+          "file": "assets/gallery/spring-2027/007_math-464-details.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/007_math-464-details.webp",
+          "title": "MATH 464 · Class details",
+          "caption": "3 units · requirements: (MATH 223 and 323) or (MATH 223, 313 and MATH/DATA 363)",
+          "w": 1092,
+          "h": 807,
+          "group": "math-464"
+        },
+        {
+          "file": "assets/gallery/spring-2027/008_ece-425-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/008_ece-425-sec-001.webp",
+          "title": "ECE 425 · Section 001",
+          "caption": "Lecture 61879 · MWF 2:00–2:50 PM · Harvill 404 · Huanrui Yang",
+          "w": 703,
+          "h": 482,
+          "group": "ece-425"
+        },
+        {
+          "file": "assets/gallery/spring-2027/009_ece-425-details.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/009_ece-425-details.webp",
+          "title": "ECE 425 · Class details",
+          "caption": "3 units · requirements: Adv Stdg Engineering; ECE 201, ECE 310, MATH 125 or 122B",
+          "w": 1106,
+          "h": 905,
+          "group": "ece-425"
+        },
+        {
+          "file": "assets/gallery/spring-2027/010_ece-455-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/010_ece-455-sec-001.webp",
+          "title": "ECE 455 · Section 001",
+          "caption": "Lecture 67102 · MWF 11:00–11:50 AM · Education 240 · Narayanan Rengaswamy",
+          "w": 711,
+          "h": 443,
+          "group": "ece-455"
+        },
+        {
+          "file": "assets/gallery/spring-2027/011_ece-455-details.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/011_ece-455-details.webp",
+          "title": "ECE 455 · Class details",
+          "caption": "3 units · requirements: Adv Stdg Engineering; MATH 254, ECE 275, (ECE 207 or 220), ECE 310",
+          "w": 999,
+          "h": 903,
+          "group": "ece-455"
+        },
+        {
+          "file": "assets/gallery/spring-2027/012_ece-508-sec-201.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/012_ece-508-sec-201.webp",
+          "title": "ECE 508 · Section 201",
+          "caption": "Lecture 66852 · fully online · Bo Liu",
+          "w": 649,
+          "h": 447,
+          "group": "ece-508"
+        },
+        {
+          "file": "assets/gallery/spring-2027/013_ece-508-details.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/013_ece-508-details.webp",
+          "title": "ECE 508 · Class details",
+          "caption": "3 units · graduate · requisite: a good command of at least one programming language",
+          "w": 1024,
+          "h": 857,
+          "group": "ece-508"
+        },
+        {
+          "file": "assets/gallery/spring-2027/014_ece-555-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/014_ece-555-sec-001.webp",
+          "title": "ECE 555 · Section 001",
+          "caption": "Lecture 67103 · MWF 11:00–11:50 AM · Education 240 · Narayanan Rengaswamy",
+          "w": 645,
+          "h": 407,
+          "group": "ece-555"
+        },
+        {
+          "file": "assets/gallery/spring-2027/015_ece-555-details.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/015_ece-555-details.webp",
+          "title": "ECE 555 · Class details",
+          "caption": "3 units · graduate · dual-numbered with ECE 455",
+          "w": 994,
+          "h": 785,
+          "group": "ece-555"
+        },
+        {
+          "file": "assets/gallery/spring-2027/016_ece-546-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/016_ece-546-sec-001.webp",
+          "title": "ECE 546 · Section 001",
+          "caption": "Lecture 67609 · MWF 10:00–10:50 AM · Harvill 302 · Xiaodong Yan",
+          "w": 637,
+          "h": 488,
+          "group": "ece-546"
+        },
+        {
+          "file": "assets/gallery/spring-2027/017_ece-546-details.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/017_ece-546-details.webp",
+          "title": "ECE 546 · Class details",
+          "caption": "3 units · graduate · cross listed",
+          "w": 985,
+          "h": 717,
+          "group": "ece-546"
+        },
+        {
+          "file": "assets/gallery/spring-2027/018_ece-523-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/018_ece-523-sec-001.webp",
+          "title": "ECE 523 · Section 001",
+          "caption": "Lecture 47946 · MWF 10:00–10:50 AM · Economics 303 · Xiaolong Ma",
+          "w": 662,
+          "h": 410,
+          "group": "ece-523"
+        },
+        {
+          "file": "assets/gallery/spring-2027/019_chem-182-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/019_chem-182-sec-001.webp",
+          "title": "CHEM 182 · Lecture 001",
+          "caption": "Lecture 55043 · MWF 9:00–9:50 AM · The Commons 105 · Steven Schwartz",
+          "w": 629,
+          "h": 385,
+          "group": "chem-182"
+        },
+        {
+          "file": "assets/gallery/spring-2027/020_chem-182-labs-a-b.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/020_chem-182-labs-a-b.webp",
+          "title": "CHEM 182 · Labs 001A, 001B",
+          "caption": "Lab 55050 · Tu 8:00–10:50 AM; Lab 55058 · Tu 11:00 AM–1:50 PM · Koffler 561",
+          "w": 652,
+          "h": 644,
+          "group": "chem-182"
+        },
+        {
+          "file": "assets/gallery/spring-2027/021_chem-182-labs-c-f.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/021_chem-182-labs-c-f.webp",
+          "title": "CHEM 182 · Labs 001C, 001F",
+          "caption": "Lab 55059 · Tu 2:00–4:50 PM; Lab 55062 · We 2:00–4:50 PM · Koffler 561",
+          "w": 650,
+          "h": 690,
+          "group": "chem-182"
+        },
+        {
+          "file": "assets/gallery/spring-2027/022_chem-480b-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/022_chem-480b-sec-001.webp",
+          "title": "CHEM 480B · Section 001",
+          "caption": "Lecture 41797 · MWF 10:00–10:50 AM · Spch & Hearing Sci 205 · Michael Brown",
+          "w": 639,
+          "h": 405,
+          "group": "chem-480b"
+        },
+        {
+          "file": "assets/gallery/spring-2027/023_chem-485-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/023_chem-485-sec-001.webp",
+          "title": "CHEM 485 · Section 001",
+          "caption": "Lecture 69514 · MWF 10:00–10:50 AM · Koffler 204 · Steven Schwartz",
+          "w": 635,
+          "h": 410,
+          "group": "chem-485"
+        },
+        {
+          "file": "assets/gallery/spring-2027/024_phys-472-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/024_phys-472-sec-001.webp",
+          "title": "PHYS 472 · Section 001",
+          "caption": "Lecture 43900 · MWF 9:00–9:50 AM · Phys-Atmos Sci 224 · Stefan Meinel",
+          "w": 654,
+          "h": 425,
+          "group": "phys-472"
+        },
+        {
+          "file": "assets/gallery/spring-2027/025_mse-507-sec-001.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/025_mse-507-sec-001.webp",
+          "title": "MSE 507 · Section 001",
+          "caption": "Lecture 67683 · Tu 3:30–6:00 PM · Economics 308 · Brian Kim",
+          "w": 643,
+          "h": 399,
+          "group": "mse-507"
+        },
+        {
+          "file": "assets/gallery/spring-2027/026_mse-507-details.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/026_mse-507-details.webp",
+          "title": "MSE 507 · Class details",
+          "caption": "3 units · graduate · solid state physics recommended",
+          "w": 992,
+          "h": 690,
+          "group": "mse-507"
+        },
+        {
+          "file": "assets/gallery/spring-2027/027_phys-560b-details.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/027_phys-560b-details.webp",
+          "title": "PHYS 560B · Class details",
+          "caption": "Lecture 67983 · MWF 2:00–2:50 PM · Phys-Atmos Sci 414 · requisite PHYS 560A",
+          "w": 977,
+          "h": 778,
+          "group": "phys-560b"
+        },
+        {
+          "file": "assets/gallery/spring-2027/028_phys-565-details.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/028_phys-565-details.webp",
+          "title": "PHYS 565 · Class details",
+          "caption": "Lecture 68058 · MWF 10:00–10:50 AM · Phys-Atmos Sci 414",
+          "w": 977,
+          "h": 789,
+          "group": "phys-565"
+        },
+        {
+          "file": "assets/gallery/spring-2027/029_phys-586-sections.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/029_phys-586-sections.webp",
+          "title": "PHYS 586 · Lecture 001 + Lab 001A",
+          "caption": "Lecture 67985 · MWF 1:00–1:50 PM · Social Sciences 307 · Kenneth Johns; Lab 68109 · Tu 5:00–7:50 PM",
+          "w": 631,
+          "h": 726,
+          "group": "phys-586"
+        },
+        {
+          "file": "assets/gallery/spring-2027/030_mat-262-pima-sections.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/030_mat-262-pima-sections.webp",
+          "title": "MAT 262 (Pima) · Sections",
+          "caption": "CRNs 22876, 20518, 20586 · Spring 2027",
+          "w": 1263,
+          "h": 862,
+          "group": "mat-262"
+        }
+      ]
+    }
+  ]
+}

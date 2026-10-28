@@ -42,6 +42,10 @@ const GLYPH = {
           + '<rect x="1.5" y="2.5" width="13" height="12"/><path d="M1.5 6h13M5 1v3M11 1v3M4 9h2M7 9h2M10 9h2M4 12h2M7 12h2"/></svg>',
   link:     '<svg class="g" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">'
           + '<path d="M6.5 9.5l3-3M7 4.5l1.6-1.6a2.6 2.6 0 0 1 3.7 3.7L10.7 8.2M9 11.5l-1.6 1.6a2.6 2.6 0 0 1-3.7-3.7L5.3 7.8"/></svg>',
+  week:     '<svg class="g" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">'
+          + '<rect x="1.5" y="2.5" width="13" height="11"/><path d="M1.5 5.5h13M5.5 5.5v8M10.5 5.5v8M3 8h1.5M7 10h2M12 8h1.5"/></svg>',
+  image:    '<svg class="g" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">'
+          + '<rect x="1.5" y="2.5" width="13" height="11"/><circle cx="5.5" cy="6" r="1.3"/><path d="M1.5 12l4-3.5 3 2.5 2.5-2 3.5 3"/></svg>',
 };
 
 export function init() {

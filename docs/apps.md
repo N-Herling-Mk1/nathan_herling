@@ -1,4 +1,4 @@
-# Tools — Calendar and Link Dock
+# Tools — Calendar, Link Dock, Gallery, Week
 
 Tool tiles sit to the right of the four deck cards (T1, T2). They are not deck
 faces: clicking one docks the deck into rail slot L4, exactly like opening a
@@ -8,6 +8,8 @@ face, and mounts the tool's app in the main area. Close / Esc unmounts it.
 |---|---|---|---|
 | T1 Calendar | `calendar` | `js/apps/calendar.js` | `data/schedule.json` |
 | T2 Link Dock | `linkdock` | `js/apps/linkdock.js` | `data/links.json` |
+| T3 Gallery | `gallery` | `js/apps/gallery.js` | `data/gallery.json` + `assets/gallery/` |
+| T4 Week | `planner` | `js/apps/planner.js` | `data/planner.json` (+ course catalog in `data/gallery.json`) |
 
 Shared pieces: `js/apps/ui.js` (element builder, status/progress bar, JSON
 loader, file picker, localStorage wrapper), `js/apps/index.js` (id → module
@@ -111,3 +113,112 @@ draft). Nobody else sees them until committed.
 Needs server code only for: live HTML scraping at drop time (a small Cloudflare
 Worker proxy), or visitor-added links that persist for everyone (a real backend
 — that belongs on the private `nathan_herling_dev` side).
+
+## Gallery — `data/gallery.json` + `assets/gallery/`
+
+Each sub-folder of `assets/gallery/` is an album. Drop images in, then:
+
+    python tools/build_gallery.py            # merge new files into the manifest, make thumbnails
+    python tools/build_gallery.py --dry-run  # report only
+
+The manifest is merged, not regenerated: titles, captions, album titles/notes and
+image order edited in `data/gallery.json` survive a rescan. New files are
+appended by file name (prefix them `001_`, `002_` … to control order), with a
+title taken from the name. Entries whose file is gone are dropped and listed.
+Thumbnails are 480 px WebP in `<album>/_thumbs/` and need Pillow
+(`pip install pillow`); without it the grid uses the full images.
+
+```json
+{
+  "updated": "2026-10-28",
+  "albums": [
+    { "id": "spring-2027", "title": "Spring 2027 — classes", "notes": "…",
+      "images": [
+        { "file": "assets/gallery/spring-2027/001_example.png",
+          "thumb": "assets/gallery/spring-2027/_thumbs/001_example.webp",
+          "title": "example", "caption": "", "w": 1920, "h": 1080 } ] }
+  ]
+}
+```
+
+**Course groups (optional, hand-written).** An album can carry `groups`, and an
+image can name one with `"group"`. The viewer then shows one card per group —
+code, name, units/career/mode/grading, description, enrollment requirements,
+and a table with one row per section — with that group's screenshots under it.
+Sections of different courses that overlap in day and time are flagged in the
+Clash column. A rescan keeps all of this; only `file`/`thumb`/`w`/`h` are rebuilt.
+
+```json
+"groups": [
+  { "id": "math-424", "code": "MATH 424", "name": "Theory of Complex Variables",
+    "units": "3", "career": "Undergraduate", "mode": "In Person", "grading": "Regular Grades A, B, C, D, E",
+    "description": "…", "requirements": "MATH 250B, 254 or 355.",
+    "sections": [ { "section": "001", "type": "Lecture", "classNo": "42340", "status": "Open w/ Req",
+                    "days": "TuTh", "time": "2:00PM - 3:15PM", "room": "Psychology, Rm 207",
+                    "instructor": "To be Announced", "dates": "1/13/27 – 5/5/27" } ],
+    "notes": "" }
+]
+```
+
+Viewer: album tabs (when there is more than one), a filter box over titles and
+captions, and a lightbox. In the lightbox: `←` / `→` page, wheel zooms toward the
+cursor, drag pans, double-click toggles fit / zoom, `0` fit, `1` actual pixels,
+`+` / `-` zoom, swipe pages on touch, Esc closes the lightbox (a second Esc
+closes the tool). **ORIGINAL ↗** opens the full file in a new tab.
+
+## Week planner — `data/planner.json`
+
+The course catalog — codes, sections, times, rooms, requirements — is written
+once, as `groups` on a gallery album (`js/apps/courses.js` reads it for both
+tools). The planner file only says **which** courses, **which** of their
+sections, and **what category**:
+
+```json
+{
+  "version": 1,
+  "categories": {
+    "take":      { "label": "Take",      "color": "#4fd6ff" },
+    "sit-in":    { "label": "Sit in",    "color": "#ffb24a" },
+    "undecided": { "label": "Undecided", "color": "#7d93a3", "dashed": true }
+  },
+  "defaultCategory": "undecided",
+  "terms": [{
+    "id": "spring-2027", "title": "Spring 2027", "dates": "…",
+    "catalog": { "source": "data/gallery.json", "album": "spring-2027" },
+    "week": { "days": ["Mo","Tu","We","Th","Fr"], "start": "08:00", "end": "20:00" },
+    "picks": [
+      { "course": "chem-182", "sections": ["001", "001A"], "category": "take", "note": "" }
+    ]
+  }]
+}
+```
+
+Built to grow: add a category (any key, label, colour, optional `dashed`);
+add a term (its own catalog album and picks — a term selector appears); add a
+course by adding a group to the album and a pick here. Unknown courses,
+sections or categories are reported in the console and skipped, never fatal.
+
+- **Week grid.** One column per day; the hour range widens to fit whatever is
+  placed. Sections that overlap are drawn **side by side** in lanes. A busy day
+  gets proportionally more width; past that the week scrolls sideways with the
+  hour labels pinned.
+- **Overlap marks.** Amber dot: overlaps another course. Red edge + dot: two
+  courses both marked *Take* overlap. Dual-numbered pairs (`"same"` on the
+  group, e.g. ECE 455/555) never count as overlapping each other.
+- **Side panel.** Click a block or a course chip: the course's screenshots
+  (‹ › or arrow keys; click the image or **WIDE** to widen the panel), a
+  category switch, one row per section with a tick box to put it on or take it
+  off the week, a note, and the full course card. The week stays on screen.
+  Esc closes the panel; a second Esc closes the tool.
+- **IMAGES mode.** **IMAGES** (or `i`) swaps the week out of the main area for a
+  full-size viewer over every screenshot in the term, in course order: ‹ › or
+  `←` `→` to step (wraps around), click the image for actual size / fit, and a
+  filmstrip of all of them underneath. The header names the course and its
+  category; **COURSE DETAILS** returns to the week with that course's panel
+  open. **WEEK**, `i` or Esc swaps the calendar back.
+- **Legend.** Category chips hide/show a category. Totals per category: course
+  count, units, contact hours per week (`*` = alternative sections still ticked).
+- **Saving.** Panel edits are kept as a draft in this browser ("unexported
+  changes"). **EXPORT** downloads `planner.json` → replace `data/planner.json`,
+  commit. **RESET** drops the draft. Once the repo file matches the draft, the
+  draft clears itself.

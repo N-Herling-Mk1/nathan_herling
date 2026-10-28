@@ -325,7 +325,9 @@ export const CFG = {
      the URL hash, so nathanherling.com/#calendar opens straight to it. */
   tools: [
     { id: 'calendar', label: 'Calendar', glyph: 'calendar', blurb: 'Schedule from data/schedule.json' },
-    { id: 'linkdock', label: 'Link Dock', glyph: 'link', blurb: 'Drop a URL, pull its icon' }
+    { id: 'linkdock', label: 'Link Dock', glyph: 'link', blurb: 'Drop a URL, pull its icon' },
+    { id: 'gallery',  label: 'Gallery',   glyph: 'image', blurb: 'Screenshots from data/gallery.json' },
+    { id: 'planner',  label: 'Week',      glyph: 'week',  blurb: 'Weekly class planner' }
   ]
 };
 

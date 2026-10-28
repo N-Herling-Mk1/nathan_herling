@@ -301,7 +301,9 @@
        the URL hash, so nathanherling.com/#calendar opens straight to it. */
     tools: [
       { id: "calendar", label: "Calendar", glyph: "calendar", blurb: "Schedule from data/schedule.json" },
-      { id: "linkdock", label: "Link Dock", glyph: "link", blurb: "Drop a URL, pull its icon" }
+      { id: "linkdock", label: "Link Dock", glyph: "link", blurb: "Drop a URL, pull its icon" },
+      { id: "gallery", label: "Gallery", glyph: "image", blurb: "Screenshots from data/gallery.json" },
+      { id: "planner", label: "Week", glyph: "week", blurb: "Weekly class planner" }
     ]
   };
   var LASER = {
@@ -3814,8 +3816,1122 @@
     };
   }
 
+  // js/apps/gallery.js
+  var gallery_exports = {};
+  __export(gallery_exports, {
+    mount: () => mount3,
+    normalize: () => normalize2
+  });
+
+  // js/apps/courses.js
+  function normalize2(data) {
+    const warn = [];
+    const albums = [];
+    (Array.isArray(data && data.albums) ? data.albums : []).forEach((a, i) => {
+      if (!a || !a.id) {
+        warn.push("albums[" + i + ']: missing "id" \u2014 skipped');
+        return;
+      }
+      const images = [];
+      (Array.isArray(a.images) ? a.images : []).forEach((im, j) => {
+        if (!im || !im.file) {
+          warn.push(a.id + ".images[" + j + ']: missing "file" \u2014 skipped');
+          return;
+        }
+        images.push({
+          file: im.file,
+          thumb: im.thumb || "",
+          title: im.title || im.file.split("/").pop(),
+          caption: im.caption || "",
+          w: im.w | 0,
+          h: im.h | 0,
+          group: im.group || ""
+        });
+      });
+      const groups = (Array.isArray(a.groups) ? a.groups : []).filter((g) => g && g.id);
+      images.forEach((im) => {
+        if (im.group && !groups.find((g) => g.id === im.group)) warn.push(a.id + ": image " + im.file + ' names unknown group "' + im.group + '"');
+      });
+      albums.push({ id: a.id, title: a.title || a.id, notes: a.notes || "", images, groups });
+    });
+    return { updated: data && data.updated || "", albums, warnings: warn };
+  }
+  var DAY_RE = /Mo|Tu|We|Th|Fr|Sa|Su/g;
+  function toMin(t) {
+    const m = /^\s*(\d{1,2}):(\d{2})\s*([AP])M\s*$/i.exec(t || "");
+    if (!m) return null;
+    let hh = +m[1] % 12;
+    if (m[3].toUpperCase() === "P") hh += 12;
+    return hh * 60 + +m[2];
+  }
+  function parseSlot(sec) {
+    const days = new Set(String(sec.days || "").match(DAY_RE) || []);
+    const [a, b] = String(sec.time || "").split("-");
+    const start2 = toMin(a), end = toMin(b);
+    return days.size && start2 != null && end != null ? { days, start: start2, end } : null;
+  }
+  function clashes(groups) {
+    const all = [];
+    groups.forEach((g) => (g.sections || []).forEach((sec) => {
+      const slot2 = parseSlot(sec);
+      if (slot2) all.push({ g, sec, slot: slot2, label: (g.code || g.id) + "-" + (sec.section || "?") });
+    }));
+    const out2 = /* @__PURE__ */ new Map();
+    for (let i = 0; i < all.length; i++) for (let j = i + 1; j < all.length; j++) {
+      const x = all[i], y = all[j];
+      if (x.g === y.g) continue;
+      if ((x.g.same || []).includes(y.g.id) || (y.g.same || []).includes(x.g.id)) continue;
+      const shareDay = [...x.slot.days].some((d) => y.slot.days.has(d));
+      if (!shareDay || x.slot.start >= y.slot.end || y.slot.start >= x.slot.end) continue;
+      if (!out2.has(x.sec)) out2.set(x.sec, []);
+      if (!out2.has(y.sec)) out2.set(y.sec, []);
+      out2.get(x.sec).push(y.label);
+      out2.get(y.sec).push(x.label);
+    }
+    return out2;
+  }
+  var groupText = (g) => [
+    g.code,
+    g.name,
+    g.career,
+    g.mode,
+    g.attributes,
+    g.classNotes,
+    g.description,
+    g.requirements,
+    g.notes,
+    ...(g.sections || []).map((x) => [x.section, x.classNo, x.days, x.time, x.room, x.instructor].join(" "))
+  ].join(" ").toLowerCase();
+  function courseCard(g, clash = /* @__PURE__ */ new Map()) {
+    const meta = [g.units && g.units + " units", g.career, g.mode, g.grading, g.components, g.attributes].filter(Boolean).join(" \xB7 ");
+    const COLS = [
+      ["section", "Sec"],
+      ["type", "Type"],
+      ["classNo", "Class #"],
+      ["status", "Status"],
+      ["days", "Days"],
+      ["time", "Time"],
+      ["room", "Room"],
+      ["instructor", "Instructor"],
+      ["dates", "Dates"]
+    ];
+    const secs = g.sections || [];
+    const table = secs.length ? h(
+      "table.gal-secs",
+      null,
+      h("thead", null, h("tr", null, COLS.map(([, l]) => h("th", { text: l })), h("th", { text: "Clash" }))),
+      h("tbody", null, secs.map((x) => {
+        const c = clash.get(x) || [];
+        return h(
+          "tr" + (c.length ? ".clash" : ""),
+          null,
+          COLS.map(([k]) => h("td", { text: x[k] || "\u2014" })),
+          h("td.c", { text: c.length ? c.join(", ") : "\u2014" })
+        );
+      }))
+    ) : null;
+    return h(
+      "div.gal-course",
+      null,
+      h(
+        "div.gal-course-head",
+        null,
+        h("span.gal-code", { text: g.code || g.id }),
+        h("span.gal-name", { text: g.name || "" })
+      ),
+      meta ? h("div.gal-meta", { text: meta }) : null,
+      g.description ? h("p.gal-desc", { text: g.description }) : null,
+      g.requirements ? h("div.gal-req", null, h("b", { text: "Enrollment requirements" }), h("span", { text: g.requirements })) : null,
+      g.classNotes ? h("div.gal-req.soft", null, h("b", { text: "Class notes" }), h("span", { text: g.classNotes })) : null,
+      table ? h("div.gal-secs-wrap", null, table) : null,
+      g.notes ? h("p.gal-gnotes", { text: g.notes }) : null
+    );
+  }
+
+  // js/apps/gallery.js
+  var SOURCE3 = "data/gallery.json";
+  var ZMIN = 0.05;
+  var ZMAX = 8;
+  function mount3(root) {
+    const st = { g: { albums: [] }, album: store.get("nh-gallery-album", ""), q: "", list: [], idx: -1 };
+    const status = statusBar();
+    const tabs = h("div.gal-tabs", { role: "tablist" });
+    const notes = h("p.gal-notes", { hidden: true });
+    const grid = h("ul.gal-grid");
+    const empty = h("p.gal-empty", { hidden: true });
+    const filter = h("input.ld-input.gal-filter", { type: "search", placeholder: "filter by title / caption", spellcheck: "false" });
+    filter.addEventListener("input", () => {
+      st.q = filter.value.trim().toLowerCase();
+      renderGrid();
+    });
+    const picker = jsonPicker("LOAD JSON", (d) => apply(d, "local file"), (m) => status.set(m, "err"));
+    picker.hidden = true;
+    root.append(h(
+      "div.app.app-gallery",
+      null,
+      h("div.app-bar", null, h("h3", { text: "GALLERY" }), h("div.app-actions", null, filter, picker)),
+      h("div.app-statusrow", null, status.el),
+      tabs,
+      notes,
+      grid,
+      empty
+    ));
+    const host3 = root.closest("#view") || root;
+    const img = h("img.gal-lb-img", { alt: "", draggable: "false" });
+    const stage2 = h("div.gal-lb-stage", null, img);
+    const lbTitle = h("div.gal-lb-title");
+    const lbCap = h("div.gal-lb-cap");
+    const lbCount = h("span.gal-lb-count");
+    const lbZoom = h("span.gal-lb-zoom");
+    const btn2 = (t, tip, fn) => h("button.app-btn", { type: "button", title: tip, text: t, onclick: fn });
+    const lbOpenLink = h("a.app-btn", { target: "_blank", rel: "noopener", title: "Open the original in a new tab", text: "ORIGINAL \u2197" });
+    const lb = h(
+      "div.gal-lb",
+      { hidden: true, role: "dialog", "aria-label": "Image viewer" },
+      stage2,
+      h("button.gal-lb-nav.prev", { type: "button", "aria-label": "Previous image", text: "\u2039", onclick: () => show3(st.idx - 1) }),
+      h("button.gal-lb-nav.next", { type: "button", "aria-label": "Next image", text: "\u203A", onclick: () => show3(st.idx + 1) }),
+      h(
+        "div.gal-lb-bar",
+        null,
+        h("div.gal-lb-text", null, lbTitle, lbCap),
+        h(
+          "div.app-actions",
+          null,
+          lbCount,
+          lbZoom,
+          btn2("FIT", "Fit to view (0)", () => fit()),
+          btn2("1:1", "Actual pixels (1)", () => zoomTo(1)),
+          lbOpenLink,
+          btn2("CLOSE", "Close (Esc)", close3)
+        )
+      )
+    );
+    host3.append(lb);
+    function apply(data, origin) {
+      status.set("validating manifest\u2026", "info", 60);
+      const n = normalize2(data);
+      st.g = n;
+      n.warnings.forEach((w) => console.warn("[nh gallery]", w));
+      if (!n.albums.find((a) => a.id === st.album)) st.album = n.albums.length ? n.albums[0].id : "";
+      renderTabs();
+      renderGrid();
+      const total = n.albums.reduce((s, a) => s + a.images.length, 0);
+      status.set(
+        n.albums.length + " album" + (n.albums.length === 1 ? "" : "s") + " \xB7 " + total + " image" + (total === 1 ? "" : "s") + (n.updated ? " \xB7 updated " + n.updated : "") + (origin ? " \xB7 " + origin : "") + (n.warnings.length ? " \xB7 " + n.warnings.length + " warning(s), see console" : ""),
+        n.warnings.length ? "warn" : "ok",
+        100
+      );
+    }
+    const current2 = () => st.g.albums.find((a) => a.id === st.album);
+    function renderTabs() {
+      tabs.hidden = st.g.albums.length < 2;
+      tabs.replaceChildren(...st.g.albums.map((a) => h("button.cal-chip" + (a.id === st.album ? ".on" : ""), {
+        type: "button",
+        role: "tab",
+        "aria-selected": a.id === st.album ? "true" : "false",
+        "--c": "var(--cyan)",
+        text: a.title + " (" + a.images.length + ")",
+        onclick: () => {
+          st.album = a.id;
+          store.set("nh-gallery-album", a.id);
+          renderTabs();
+          renderGrid();
+        }
+      })));
+    }
+    function renderGrid() {
+      const a = current2();
+      notes.hidden = !(a && a.notes);
+      notes.textContent = a ? a.notes : "";
+      const q = st.q;
+      const hit = (im) => !q || (im.title + " " + im.caption).toLowerCase().includes(q);
+      const blocks = [];
+      if (a) {
+        const clash = clashes(a.groups);
+        for (const g of a.groups) {
+          const gHit = !q || groupText(g).includes(q);
+          const imgs = a.images.filter((im) => im.group === g.id && (gHit || hit(im)));
+          if (gHit || imgs.length) blocks.push({ g, imgs, card: courseCard(g, clash) });
+        }
+        const loose = a.images.filter((im) => (!im.group || !a.groups.find((g) => g.id === im.group)) && hit(im));
+        if (loose.length) blocks.push({ g: null, imgs: loose, card: a.groups.length ? h("div.gal-course-head", null, h("span.gal-name", { text: "Other" })) : null });
+      }
+      st.list = blocks.flatMap((b) => b.imgs);
+      empty.hidden = blocks.length > 0;
+      empty.textContent = !a ? "No albums yet. Put images in assets/gallery/<album>/ and run tools/build_gallery.py." : q ? 'Nothing matches "' + q + '".' : "This album is empty.";
+      let done = 0;
+      const total = st.list.length;
+      const tick2 = () => {
+        done++;
+        if (done < total) status.set("loading thumbnails " + done + "/" + total, "info", Math.round(done / total * 100));
+        else status.set((a ? a.title + " \xB7 " : "") + (a && a.groups.length ? a.groups.length + " courses \xB7 " : "") + total + " image" + (total === 1 ? "" : "s"), "ok", 100);
+      };
+      const thumb = (im) => {
+        const i = st.list.indexOf(im);
+        const t = h("img", { src: im.thumb || im.file, alt: im.title, decoding: "async" });
+        t.addEventListener("load", tick2, { once: true });
+        t.addEventListener("error", () => {
+          t.replaceWith(h("span.gal-missing", { text: "missing: " + im.file }));
+          tick2();
+        }, { once: true });
+        return h(
+          "li.gal-item",
+          null,
+          h(
+            "button.gal-thumb",
+            { type: "button", title: im.title + (im.w ? " \xB7 " + im.w + "\xD7" + im.h : ""), onclick: () => open3(i) },
+            t,
+            h("span.gal-label", { text: im.title })
+          )
+        );
+      };
+      grid.replaceChildren(...blocks.map((b) => h(
+        "li.gal-block",
+        null,
+        b.card,
+        b.imgs.length ? h("ul.gal-grid-inner", null, b.imgs.map(thumb)) : null
+      )));
+      if (!total && blocks.length) status.set((a ? a.title + " \xB7 " : "") + "no images match", "ok", 100);
+      else if (total) status.set("loading thumbnails 0/" + total, "info", 0);
+    }
+    const view2 = { s: 1, x: 0, y: 0, fitS: 1 };
+    function applyT() {
+      img.style.transform = "translate(" + view2.x + "px," + view2.y + "px) scale(" + view2.s + ")";
+      lbZoom.textContent = Math.round(view2.s * 100) + "%";
+    }
+    function fit() {
+      const r = stage2.getBoundingClientRect();
+      const nw = img.naturalWidth || 1, nh = img.naturalHeight || 1;
+      view2.fitS = Math.min((r.width - 24) / nw, (r.height - 24) / nh, 1);
+      view2.s = view2.fitS;
+      view2.x = (r.width - nw * view2.s) / 2;
+      view2.y = (r.height - nh * view2.s) / 2;
+      applyT();
+    }
+    function zoomTo(s, cx, cy) {
+      const r = stage2.getBoundingClientRect();
+      if (cx == null) {
+        cx = r.width / 2;
+        cy = r.height / 2;
+      }
+      s = Math.max(ZMIN, Math.min(ZMAX, s));
+      view2.x = cx - (cx - view2.x) * (s / view2.s);
+      view2.y = cy - (cy - view2.y) * (s / view2.s);
+      view2.s = s;
+      applyT();
+    }
+    function pin() {
+      if (host3 === root) return;
+      lb.style.top = host3.scrollTop + "px";
+      lb.style.height = host3.clientHeight + "px";
+      lb.style.bottom = "auto";
+    }
+    function open3(i) {
+      lb.hidden = false;
+      host3.classList.add("gal-lb-on");
+      pin();
+      show3(i);
+    }
+    function show3(i) {
+      const n = st.list.length;
+      if (!n) return;
+      st.idx = (i + n) % n;
+      const im = st.list[st.idx];
+      lbTitle.textContent = im.title;
+      lbCap.textContent = im.caption;
+      lbCap.hidden = !im.caption;
+      lbCount.textContent = st.idx + 1 + " / " + n;
+      lbOpenLink.href = im.file;
+      lbZoom.textContent = "\u2026";
+      img.onload = fit;
+      img.onerror = () => {
+        lbZoom.textContent = "failed";
+        status.set("could not load " + im.file, "err");
+      };
+      img.src = im.file;
+      if (img.complete && img.naturalWidth) fit();
+      [st.idx + 1, st.idx - 1].forEach((k) => {
+        const nb = st.list[(k + n) % n];
+        if (nb) new Image().src = nb.file;
+      });
+    }
+    function close3() {
+      lb.hidden = true;
+      host3.classList.remove("gal-lb-on");
+      img.removeAttribute("src");
+      st.idx = -1;
+    }
+    stage2.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const r = stage2.getBoundingClientRect();
+      zoomTo(view2.s * Math.exp(-e.deltaY * 15e-4), e.clientX - r.left, e.clientY - r.top);
+    }, { passive: false });
+    stage2.addEventListener("dblclick", (e) => {
+      const r = stage2.getBoundingClientRect();
+      if (Math.abs(view2.s - view2.fitS) < 0.01) zoomTo(1 > view2.fitS * 1.2 ? 1 : view2.fitS * 2.5, e.clientX - r.left, e.clientY - r.top);
+      else fit();
+    });
+    let drag = null;
+    stage2.addEventListener("pointerdown", (e) => {
+      drag = { x: e.clientX, y: e.clientY, vx: view2.x, vy: view2.y, moved: 0 };
+      stage2.setPointerCapture(e.pointerId);
+      stage2.classList.add("grabbing");
+    });
+    stage2.addEventListener("pointermove", (e) => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      drag.moved = Math.max(drag.moved, Math.abs(dx) + Math.abs(dy));
+      view2.x = drag.vx + dx;
+      view2.y = drag.vy + dy;
+      applyT();
+    });
+    const endDrag = (e) => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x;
+      if (Math.abs(view2.s - view2.fitS) < 0.01 && Math.abs(dx) > 70) {
+        show3(st.idx + (dx < 0 ? 1 : -1));
+      }
+      drag = null;
+      stage2.classList.remove("grabbing");
+    };
+    stage2.addEventListener("pointerup", endDrag);
+    stage2.addEventListener("pointercancel", endDrag);
+    const onKey = (e) => {
+      if (lb.hidden) return;
+      const k = e.key;
+      if (k === "Escape") close3();
+      else if (k === "ArrowLeft") show3(st.idx - 1);
+      else if (k === "ArrowRight") show3(st.idx + 1);
+      else if (k === "+" || k === "=") zoomTo(view2.s * 1.25);
+      else if (k === "-" || k === "_") zoomTo(view2.s / 1.25);
+      else if (k === "0") fit();
+      else if (k === "1") zoomTo(1);
+      else return;
+      e.preventDefault();
+      e.stopPropagation();
+    };
+    addEventListener("keydown", onKey, true);
+    const onResize2 = () => {
+      if (!lb.hidden) {
+        pin();
+        fit();
+      }
+    };
+    addEventListener("resize", onResize2);
+    (async () => {
+      status.set("fetching " + SOURCE3 + "\u2026", "info", 20);
+      const r = await loadJSON(SOURCE3);
+      if (r.data) {
+        status.set("parsing\u2026", "info", 45);
+        apply(r.data);
+        return;
+      }
+      picker.hidden = false;
+      renderGrid();
+      if (r.offline) status.set("Opened from disk: browsers block reading " + SOURCE3 + " here. Use LOAD JSON, or serve the folder.", "warn", 100);
+      else if (r.missing) status.set(SOURCE3 + " not found \u2014 run tools/build_gallery.py", "err", 100);
+      else status.set(r.error, "err", 100);
+    })();
+    return function destroy() {
+      removeEventListener("keydown", onKey, true);
+      removeEventListener("resize", onResize2);
+      host3.classList.remove("gal-lb-on");
+      lb.remove();
+    };
+  }
+
+  // js/apps/planner.js
+  var planner_exports = {};
+  __export(planner_exports, {
+    layoutDay: () => layoutDay,
+    mount: () => mount4,
+    normalizePlan: () => normalizePlan
+  });
+  var SOURCE4 = "data/planner.json";
+  var DRAFT_KEY2 = "nh-planner-draft-v1";
+  var UI_KEY = "nh-planner-ui-v1";
+  var DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+  var DAY_LABEL = { Mo: "MON", Tu: "TUE", We: "WED", Th: "THU", Fr: "FRI", Sa: "SAT", Su: "SUN" };
+  var LANE_PX = 64;
+  var TYPE_ABBR = { Lecture: "LEC", Laboratory: "LAB", Discussion: "DIS", Seminar: "SEM", Studio: "STU" };
+  var hm = (s) => {
+    const m = /^(\d{1,2}):(\d{2})$/.exec(s || "");
+    return m ? +m[1] * 60 + +m[2] : null;
+  };
+  function clock(min) {
+    let hh = Math.floor(min / 60), mm = min % 60;
+    const ap = hh >= 12 ? "p" : "a";
+    hh = hh % 12 || 12;
+    return mm ? hh + ":" + String(mm).padStart(2, "0") + ap : hh + ap;
+  }
+  var same = (a, b) => (a.same || []).includes(b.id) || (b.same || []).includes(a.id);
+  function layoutDay(blocks) {
+    blocks.sort((a, b) => a.start - b.start || b.end - a.end);
+    let cluster = [], lanes = [], clusterEnd = -1;
+    const close3 = () => {
+      cluster.forEach((b) => {
+        b.lanes = lanes.length;
+      });
+      cluster = [];
+      lanes = [];
+    };
+    for (const b of blocks) {
+      if (cluster.length && b.start >= clusterEnd) {
+        close3();
+        clusterEnd = -1;
+      }
+      let i = lanes.findIndex((end) => end <= b.start);
+      if (i < 0) {
+        i = lanes.length;
+        lanes.push(0);
+      }
+      lanes[i] = b.end;
+      b.lane = i;
+      cluster.push(b);
+      clusterEnd = Math.max(clusterEnd, b.end);
+    }
+    close3();
+    return blocks;
+  }
+  function normalizePlan(data, catalogs) {
+    const warn = [];
+    const cats = data && data.categories || {};
+    if (!Object.keys(cats).length) cats.undecided = { label: "Undecided", color: "#7d93a3", dashed: true };
+    const def = cats[data.defaultCategory] ? data.defaultCategory : Object.keys(cats)[0];
+    const terms = [];
+    (Array.isArray(data.terms) ? data.terms : []).forEach((t, i) => {
+      if (!t || !t.id) {
+        warn.push("terms[" + i + ']: missing "id" \u2014 skipped');
+        return;
+      }
+      const album = catalogs[t.catalog && t.catalog.album || t.id];
+      if (!album) {
+        warn.push(t.id + ': catalog album "' + (t.catalog && t.catalog.album || t.id) + '" not found in data/gallery.json');
+      }
+      const groups = album ? album.groups : [];
+      const picks = [];
+      (Array.isArray(t.picks) ? t.picks : []).forEach((p2, j) => {
+        const g = groups.find((x) => x.id === p2.course);
+        if (!g) {
+          warn.push(t.id + ".picks[" + j + ']: unknown course "' + p2.course + '" \u2014 skipped');
+          return;
+        }
+        const secs = (Array.isArray(p2.sections) ? p2.sections : []).filter((s) => {
+          const ok = (g.sections || []).some((x) => x.section === s);
+          if (!ok) warn.push(t.id + ": " + g.code + ' has no section "' + s + '" \u2014 ignored');
+          return ok;
+        });
+        let cat = p2.category;
+        if (!cats[cat]) {
+          if (cat) warn.push(t.id + ": " + g.code + ' category "' + cat + '" undefined \u2014 using "' + def + '"');
+          cat = def;
+        }
+        picks.push({ course: g.id, sections: secs, category: cat, note: p2.note || "" });
+      });
+      const wk = t.week || {};
+      terms.push({
+        id: t.id,
+        title: t.title || t.id,
+        dates: t.dates || "",
+        catalog: t.catalog || {},
+        week: {
+          days: (wk.days || ["Mo", "Tu", "We", "Th", "Fr"]).filter((d) => DAYS.includes(d)),
+          start: hm(wk.start) ?? 8 * 60,
+          end: hm(wk.end) ?? 20 * 60
+        },
+        picks,
+        groups,
+        images: album ? album.images : []
+      });
+    });
+    return { raw: data, categories: cats, defaultCategory: def, terms, warnings: warn };
+  }
+  function mount4(root) {
+    const ui = Object.assign({ hidden: [], term: "", wide: false }, store.get(UI_KEY, {}));
+    const st = {
+      plan: null,
+      term: null,
+      sel: null,
+      img: 0,
+      hidden: new Set(ui.hidden),
+      wide: !!ui.wide,
+      draft: false,
+      mode: "course",
+      all: 0
+    };
+    const status = statusBar();
+    const title = h("h3", { text: "WEEK" });
+    const termSel = h("select.pl-term", { hidden: true, "aria-label": "Term" });
+    const draftTag = h("span.pl-draft", { hidden: true, text: "unexported changes" });
+    const resetBtn = h("button.app-btn", { type: "button", hidden: true, text: "RESET", title: "Drop this browser\u2019s draft and reload planner.json" });
+    const imagesBtn = h("button.app-btn.pl-imgbtn", {
+      type: "button",
+      text: "IMAGES",
+      title: "Swap the week for a full-size viewer over every screenshot (i)",
+      onclick: () => toggleAll()
+    });
+    const picker = jsonPicker("LOAD JSON", (d) => boot2(d, "local file"), (m) => status.set(m, "err"));
+    picker.hidden = true;
+    const legend = h("div.pl-legend");
+    const totals = h("div.pl-totals");
+    const head2 = h("div.pl-head");
+    const gutter = h("div.pl-gutter");
+    const cols = h("div.pl-cols");
+    const week = h("div.pl-week", null, head2, h("div.pl-grid", null, gutter, cols));
+    const chips = h("div.pl-chips");
+    const panel = h("aside.pl-panel", { hidden: true, "aria-label": "Course details" });
+    const main = h("section.pl-main", null, week, chips);
+    const stage2 = h("section.pl-stage", { hidden: true, "aria-label": "All screenshots" });
+    const body = h("div.pl-body", null, main, stage2, panel);
+    root.append(h(
+      "div.app.app-planner",
+      null,
+      h(
+        "div.app-bar",
+        null,
+        title,
+        h(
+          "div.app-actions",
+          null,
+          termSel,
+          draftTag,
+          resetBtn,
+          picker,
+          imagesBtn,
+          h("button.app-btn", { type: "button", text: "COPY JSON", title: "Copy planner.json to the clipboard", onclick: copyJson }),
+          h("button.app-btn", { type: "button", text: "EXPORT", title: "Download planner.json \u2014 commit it as data/planner.json", onclick: download })
+        )
+      ),
+      h("div.app-statusrow", null, status.el),
+      h("div.pl-legendrow", null, legend, totals),
+      body
+    ));
+    if (st.wide) body.classList.add("wide");
+    const saveUI = () => store.set(UI_KEY, { hidden: [...st.hidden], term: st.term ? st.term.id : "", wide: st.wide });
+    const group = (id) => st.term.groups.find((g) => g.id === id);
+    const pickOf = (id) => st.term.picks.find((p2) => p2.course === id);
+    const catOf = (p2) => st.plan.categories[p2.category] || { label: p2.category, color: "#7d93a3" };
+    function blocks() {
+      const out2 = [], unplaced = [];
+      for (const p2 of st.term.picks) {
+        if (st.hidden.has(p2.category)) continue;
+        const g = group(p2.course);
+        for (const sid of p2.sections) {
+          const sec = g.sections.find((x) => x.section === sid);
+          const slot2 = parseSlot(sec);
+          if (!slot2) {
+            unplaced.push({ g, sec, p: p2 });
+            continue;
+          }
+          for (const d of slot2.days) out2.push({ day: d, start: slot2.start, end: slot2.end, g, sec, p: p2 });
+        }
+      }
+      for (let i = 0; i < out2.length; i++) for (let j = i + 1; j < out2.length; j++) {
+        const a = out2[i], b = out2[j];
+        if (a.day !== b.day || a.g === b.g || same(a.g, b.g) || a.start >= b.end || b.start >= a.end) continue;
+        a.clash = b.clash = true;
+        if (a.p.category === "take" && b.p.category === "take") a.hard = b.hard = true;
+      }
+      return { out: out2, unplaced };
+    }
+    function renderWeek() {
+      const { out: out2, unplaced } = blocks();
+      const used = new Set(out2.map((b) => b.day));
+      const days = DAYS.filter((d) => st.term.week.days.includes(d) || used.has(d));
+      let t03 = st.term.week.start, t1 = st.term.week.end;
+      for (const b of out2) {
+        t03 = Math.min(t03, Math.floor(b.start / 60) * 60);
+        t1 = Math.max(t1, Math.ceil(b.end / 60) * 60);
+      }
+      const avail = Math.max(200, week.clientHeight - 30);
+      const ppm = Math.max(0.72, Math.min(2.4, avail / (t1 - t03)));
+      const H3 = Math.round((t1 - t03) * ppm);
+      week.style.setProperty("--hour", (60 * ppm).toFixed(2) + "px");
+      week.style.setProperty("--off", ((60 - t03 % 60) % 60 * ppm).toFixed(2) + "px");
+      head2.replaceChildren(h("div.pl-corner"), ...days.map((d) => h("div.pl-day", { text: DAY_LABEL[d] })));
+      const perDay = days.map((d) => layoutDay(out2.filter((b) => b.day === d)));
+      const tracks = perDay.map((list) => {
+        const n = Math.max(1, ...list.map((b) => b.lanes || 1));
+        return "minmax(" + Math.max(96, n * LANE_PX) + "px," + n + "fr)";
+      }).join(" ");
+      head2.style.gridTemplateColumns = "var(--gw) " + tracks;
+      cols.style.gridTemplateColumns = tracks;
+      const labels = [];
+      for (let m = Math.ceil(t03 / 60) * 60; m <= t1; m += 60) labels.push(h("span", { text: clock(m), style: { top: (m - t03) * ppm + "px" } }));
+      gutter.replaceChildren(...labels);
+      gutter.style.height = H3 + "px";
+      cols.replaceChildren(...days.map((d, di) => {
+        const list = perDay[di];
+        return h("div.pl-col", { style: { height: H3 + "px" } }, list.map((b) => {
+          const c = catOf(b.p);
+          const w = 100 / b.lanes;
+          const el3 = h(
+            "button.pl-blk" + (c.dashed ? ".dashed" : "") + (b.clash ? ".clash" : "") + (b.hard ? ".hard" : "") + (st.sel === b.g.id ? ".sel" : ""),
+            {
+              type: "button",
+              "--c": c.color,
+              title: [
+                b.g.code + " " + (b.g.name || ""),
+                (b.sec.type || "") + " " + b.sec.section,
+                (b.sec.days || "") + " " + (b.sec.time || ""),
+                b.sec.room,
+                b.sec.instructor,
+                c.label + (b.hard ? " \xB7 overlaps another TAKE course" : b.clash ? " \xB7 overlaps" : "")
+              ].filter(Boolean).join("\n"),
+              style: {
+                top: (b.start - t03) * ppm + "px",
+                height: Math.max(14, (b.end - b.start) * ppm - 2) + "px",
+                left: "calc(" + b.lane * w + "% + 2px)",
+                width: "calc(" + w + "% - 4px)"
+              },
+              onclick: () => select(b.g.id)
+            },
+            h("b", { text: b.g.code }),
+            h("span.s", { text: (TYPE_ABBR[b.sec.type] || b.sec.type || "") + " " + b.sec.section }),
+            h("span.t", { text: clock(b.start) + "\u2013" + clock(b.end) }),
+            h("span.r", { text: b.sec.room || "" })
+          );
+          return el3;
+        }));
+      }));
+      chips.replaceChildren(h("span.pl-chips-lbl", { text: "COURSES" }), ...st.term.picks.map((p2) => {
+        const g = group(p2.course), c = catOf(p2);
+        const off2 = !out2.some((b) => b.g === g);
+        const why = unplaced.some((u) => u.g === g) ? "no meeting time" : st.hidden.has(p2.category) ? "category hidden" : !p2.sections.length ? "no sections ticked" : "";
+        return h("button.pl-chip" + (c.dashed ? ".dashed" : "") + (st.sel === g.id ? ".sel" : "") + (off2 ? ".off" : ""), {
+          type: "button",
+          "--c": c.color,
+          title: (g.name || "") + (why ? " \u2014 " + why : ""),
+          onclick: () => select(g.id)
+        }, g.code, why ? h("i", { text: why }) : null);
+      }));
+    }
+    function renderLegend() {
+      legend.replaceChildren(...Object.entries(st.plan.categories).map(([k, c]) => h("button.cal-chip" + (st.hidden.has(k) ? ".off" : ""), {
+        type: "button",
+        "--c": c.color,
+        title: "Show / hide",
+        text: c.label || k,
+        onclick: () => {
+          st.hidden.has(k) ? st.hidden.delete(k) : st.hidden.add(k);
+          saveUI();
+          renderAll();
+        }
+      })));
+      const rows = [];
+      for (const [k, c] of Object.entries(st.plan.categories)) {
+        const ps = st.term.picks.filter((p2) => p2.category === k);
+        if (!ps.length) continue;
+        let units = 0, unknown = 0, mins = 0, alt = false;
+        for (const p2 of ps) {
+          const g = group(p2.course);
+          const u = parseFloat(g.units);
+          if (isNaN(u)) unknown++;
+          else units += u;
+          const byType = {};
+          for (const sid of p2.sections) {
+            const sec = g.sections.find((x) => x.section === sid), slot2 = parseSlot(sec);
+            byType[sec.type] = (byType[sec.type] || 0) + 1;
+            if (slot2) mins += (slot2.end - slot2.start) * slot2.days.size;
+          }
+          if (Object.values(byType).some((n) => n > 1)) alt = true;
+        }
+        rows.push(h(
+          "span.pl-total",
+          { "--c": c.color },
+          h("b", { text: c.label }),
+          " " + ps.length + " course" + (ps.length === 1 ? "" : "s") + " \xB7 " + (units ? units + (unknown ? "+?" : "") : "?") + " units \xB7 " + (mins / 60).toFixed(1) + (alt ? "*" : "") + " h/wk"
+        ));
+      }
+      const hard = blocks().out.filter((b) => b.hard).length;
+      if (hard) rows.push(h("span.pl-total.warn", { text: "TAKE overlaps on the grid" }));
+      if (rows.some((r) => r.textContent.includes("*"))) rows.push(h("span.pl-foot", { text: "* includes alternative sections not yet narrowed to one" }));
+      totals.replaceChildren(...rows);
+    }
+    function select(id) {
+      st.mode = "course";
+      st.sel = id;
+      st.img = 0;
+      renderAll();
+    }
+    function closePanel() {
+      st.sel = null;
+      renderAll();
+    }
+    function allImages() {
+      const order = new Map(st.term.groups.map((g, i) => [g.id, i]));
+      return st.term.images.map((im, i) => ({ im, i })).sort((a, b) => (order.get(a.im.group) ?? 1e9) - (order.get(b.im.group) ?? 1e9) || a.i - b.i).map((x) => x.im);
+    }
+    function toggleAll() {
+      if (st.mode === "all") {
+        st.mode = "course";
+        renderAll();
+        return;
+      }
+      const list = allImages();
+      if (!list.length) {
+        status.set("no screenshots in this term", "warn", 100);
+        return;
+      }
+      const at = st.sel ? list.findIndex((im) => im.group === st.sel) : -1;
+      st.mode = "all";
+      st.all = at >= 0 ? at + st.img : 0;
+      st.actual = false;
+      stepAll(0);
+    }
+    function stepAll(d) {
+      const n = allImages().length;
+      st.all = (st.all + d + n) % n;
+      st.actual = false;
+      renderAll();
+    }
+    function viewerBlock(imgs, idx2, onStep, label) {
+      const im = imgs[idx2];
+      return h(
+        "div.pl-viewer",
+        null,
+        h("div.pl-imgwrap", null, h("img.pl-img", {
+          src: im.file,
+          alt: im.title,
+          title: st.wide ? "Click to narrow the panel" : "Click to widen the panel",
+          onclick: () => toggleWide()
+        })),
+        h(
+          "div.pl-vbar",
+          null,
+          h("button.app-btn", { type: "button", text: "\u2039", title: "Previous image (\u2190)", onclick: () => onStep(-1) }),
+          h("span.pl-vcount", { text: idx2 + 1 + " / " + imgs.length }),
+          h("button.app-btn", { type: "button", text: "\u203A", title: "Next image (\u2192)", onclick: () => onStep(1) }),
+          h("span.pl-vcap", { text: label || im.title }),
+          h("button.app-btn", { type: "button", text: st.wide ? "NARROW" : "WIDE", onclick: () => toggleWide() }),
+          h("a.app-btn", { href: im.file, target: "_blank", rel: "noopener", text: "\u2197", title: "Open the original in a new tab" })
+        )
+      );
+    }
+    function renderStage() {
+      const list = allImages();
+      const im = list[st.all];
+      const g = im.group ? group(im.group) : null;
+      const p2 = g ? pickOf(g.id) : null;
+      const c = p2 ? catOf(p2) : null;
+      const img = h("img.pl-simg", {
+        src: im.file,
+        alt: im.title,
+        title: st.actual ? "Click to fit" : "Click for actual size",
+        onclick: () => {
+          st.actual = !st.actual;
+          renderStage();
+        }
+      });
+      const strip = h("div.pl-strip.all", null, list.map((x, i) => h("button" + (i === st.all ? ".on" : ""), {
+        type: "button",
+        title: x.title,
+        onclick: () => {
+          st.all = i;
+          stepAll(0);
+        }
+      }, h("img", { src: x.thumb || x.file, alt: "" }))));
+      stage2.replaceChildren(
+        h(
+          "div.pl-shead",
+          null,
+          h("span.pl-vcount", { text: st.all + 1 + " / " + list.length }),
+          h("span.gal-code", { text: g ? g.code : "\u2014" }),
+          h("span.gal-name", { text: g ? g.name || "" : "not tied to a course" }),
+          c ? h("span.pl-acat", { "--c": c.color, text: c.label }) : null,
+          h("span.pl-sgrow"),
+          g ? h("button.app-btn", {
+            type: "button",
+            text: "COURSE DETAILS",
+            title: "Back to the week with this course\u2019s panel open",
+            onclick: () => {
+              const own = st.term.images.filter((x) => x.group === g.id);
+              st.mode = "course";
+              st.sel = g.id;
+              st.img = Math.max(0, own.indexOf(im));
+              renderAll();
+            }
+          }) : null,
+          h("a.app-btn", { href: im.file, target: "_blank", rel: "noopener", text: "\u2197", title: "Open the original in a new tab" })
+        ),
+        h(
+          "div.pl-sframe" + (st.actual ? ".actual" : ""),
+          null,
+          h("button.pl-snav.prev", { type: "button", "aria-label": "Previous image", text: "\u2039", onclick: () => stepAll(-1) }),
+          h("div.pl-sscroll", null, img),
+          h("button.pl-snav.next", { type: "button", "aria-label": "Next image", text: "\u203A", onclick: () => stepAll(1) })
+        ),
+        h(
+          "div.pl-sfoot",
+          null,
+          h("span.pl-vcap", { text: im.title }),
+          im.caption ? h("span.pl-acap", { text: im.caption }) : null
+        ),
+        strip
+      );
+      const on2 = strip.querySelector(".on");
+      if (on2) requestAnimationFrame(() => on2.scrollIntoView({ block: "nearest", inline: "center" }));
+    }
+    function renderPanel() {
+      const open3 = !!st.sel && st.mode !== "all";
+      panel.hidden = !open3;
+      body.classList.toggle("open", open3);
+      if (!open3) {
+        panel.replaceChildren();
+        return;
+      }
+      const g = group(st.sel), p2 = pickOf(st.sel);
+      const imgs = st.term.images.filter((im) => im.group === g.id);
+      st.img = imgs.length ? (st.img + imgs.length) % imgs.length : 0;
+      const segs = h(
+        "div.pl-seg",
+        { role: "radiogroup", "aria-label": "Category" },
+        Object.entries(st.plan.categories).map(([k, c]) => h("button" + (p2.category === k ? ".on" : ""), {
+          type: "button",
+          role: "radio",
+          "aria-checked": p2.category === k ? "true" : "false",
+          "--c": c.color,
+          text: c.label,
+          onclick: () => {
+            p2.category = k;
+            changed();
+          }
+        }))
+      );
+      const viewer = imgs.length ? h(
+        "div",
+        null,
+        viewerBlock(imgs, st.img, (d) => {
+          st.img += d;
+          renderPanel();
+        }),
+        imgs.length > 1 ? h("div.pl-strip", null, imgs.map((x, i) => h("button" + (i === st.img ? ".on" : ""), {
+          type: "button",
+          title: x.title,
+          onclick: () => {
+            st.img = i;
+            renderPanel();
+          }
+        }, h("img", { src: x.thumb || x.file, alt: "" })))) : null
+      ) : null;
+      const types = [...new Set(g.sections.map((s) => s.type || ""))];
+      const secTables = types.map((ty) => {
+        const list = g.sections.filter((s) => (s.type || "") === ty);
+        const ticked = list.filter((s) => p2.sections.includes(s.section)).length;
+        return h(
+          "div.pl-sectype",
+          null,
+          h(
+            "div.pl-sechead",
+            null,
+            h("b", { text: (ty || "Section") + (list.length > 1 ? "s" : "") }),
+            list.length > 1 && ticked > 1 ? h("span.pl-hint", { text: ticked + " shown \u2014 keep the one you want" }) : null
+          ),
+          h("table.pl-secs", null, h("tbody", null, list.map((s) => {
+            const on2 = p2.sections.includes(s.section);
+            const cb = h("input", { type: "checkbox", "aria-label": "Show section " + s.section });
+            cb.checked = on2;
+            cb.addEventListener("change", () => {
+              p2.sections = cb.checked ? [...p2.sections, s.section] : p2.sections.filter((x) => x !== s.section);
+              p2.sections.sort((a, b) => g.sections.findIndex((x) => x.section === a) - g.sections.findIndex((x) => x.section === b));
+              changed();
+            });
+            return h(
+              "tr" + (on2 ? "" : ".dim"),
+              { title: [s.instructor, s.classNo && "class # " + s.classNo, s.status].filter(Boolean).join(" \xB7 ") },
+              h("td", null, cb),
+              h("td.sec", { text: s.section }),
+              h("td", { text: ((s.days || "") + " " + (s.time || "")).trim() || "online / no set time" }),
+              h("td.room", { text: s.room || "" })
+            );
+          })))
+        );
+      });
+      const note = h("textarea.pl-note", { rows: 2, placeholder: "note for this course (exported with planner.json)", spellcheck: "true" });
+      note.value = p2.note || "";
+      note.addEventListener("change", () => {
+        p2.note = note.value.trim();
+        changed(false);
+      });
+      panel.replaceChildren(...[
+        h(
+          "div.pl-phead",
+          null,
+          h("div", null, h("span.gal-code", { text: g.code }), h("div.gal-name", { text: g.name || "" })),
+          h("button.app-btn", { type: "button", text: "\u2715", title: "Close panel (Esc)", onclick: closePanel })
+        ),
+        segs,
+        viewer,
+        ...secTables,
+        note,
+        h("div.pl-card", null, courseCard(g))
+      ].filter(Boolean));
+    }
+    function toggleWide() {
+      st.wide = !st.wide;
+      body.classList.toggle("wide", st.wide);
+      saveUI();
+      renderAll();
+    }
+    function snapshot() {
+      const out2 = JSON.parse(JSON.stringify(st.plan.raw));
+      out2.updated = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
+      for (const t of out2.terms || []) {
+        const live3 = st.plan.terms.find((x) => x.id === t.id);
+        if (live3) t.picks = live3.picks.map((p2) => ({ course: p2.course, sections: p2.sections.slice(), category: p2.category, note: p2.note || "" }));
+      }
+      return out2;
+    }
+    const picksOf = (obj) => JSON.stringify((obj.terms || []).map((t) => [t.id, (t.picks || []).map((p2) => [p2.course, p2.sections, p2.category, p2.note || ""])]));
+    function changed(rerender = true) {
+      const snap2 = snapshot();
+      st.draft = picksOf(snap2) !== picksOf(st.plan.raw);
+      if (st.draft) store.set(DRAFT_KEY2, { terms: snap2.terms.map((t) => ({ id: t.id, picks: t.picks })) });
+      else store.del(DRAFT_KEY2);
+      draftTag.hidden = resetBtn.hidden = !st.draft;
+      if (rerender) renderAll();
+    }
+    function download() {
+      const a = h("a", { href: URL.createObjectURL(new Blob([JSON.stringify(snapshot(), null, 2) + "\n"], { type: "application/json" })), download: "planner.json" });
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1e3);
+      status.set("exported planner.json \u2014 replace data/planner.json with it and commit", "ok", 100);
+    }
+    async function copyJson() {
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(snapshot(), null, 2) + "\n");
+        status.set("planner.json copied to clipboard", "ok", 100);
+      } catch (e) {
+        status.set("clipboard blocked \u2014 use EXPORT", "err");
+      }
+    }
+    resetBtn.addEventListener("click", () => {
+      if (!confirm("Drop the unexported changes in this browser?")) return;
+      store.del(DRAFT_KEY2);
+      load2();
+    });
+    function renderAll() {
+      if (!st.term) return;
+      const imgs = st.mode === "all";
+      main.hidden = imgs;
+      stage2.hidden = !imgs;
+      body.classList.toggle("images", imgs);
+      imagesBtn.textContent = imgs ? "WEEK" : "IMAGES";
+      imagesBtn.title = imgs ? "Back to the week (Esc / i)" : "Swap the week for a full-size viewer over every screenshot (i)";
+      imagesBtn.classList.toggle("on", imgs);
+      renderLegend();
+      if (imgs) renderStage();
+      else renderWeek();
+      renderPanel();
+    }
+    const onKey = (e) => {
+      if (e.target.closest && e.target.closest("input, textarea, select")) return;
+      if ((e.key === "i" || e.key === "I") && st.term && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        toggleAll();
+        e.preventDefault();
+        return;
+      }
+      if (!st.sel && st.mode !== "all") return;
+      if (e.key === "Escape") {
+        if (st.mode === "all") toggleAll();
+        else closePanel();
+      } else if (e.key === "ArrowLeft") {
+        if (st.mode === "all") stepAll(-1);
+        else {
+          st.img--;
+          renderPanel();
+        }
+      } else if (e.key === "ArrowRight") {
+        if (st.mode === "all") stepAll(1);
+        else {
+          st.img++;
+          renderPanel();
+        }
+      } else return;
+      e.preventDefault();
+      e.stopPropagation();
+    };
+    addEventListener("keydown", onKey, true);
+    let lastH = 0;
+    const ro = window.ResizeObserver ? new ResizeObserver(() => {
+      if (st.term && Math.abs(week.clientHeight - lastH) > 4) {
+        lastH = week.clientHeight;
+        renderWeek();
+      }
+    }) : null;
+    if (ro) ro.observe(week);
+    async function boot2(planData, origin) {
+      status.set("fetching course catalog\u2026", "info", 35);
+      const terms = planData.terms || [];
+      const sources = [...new Set(terms.map((t) => t.catalog && t.catalog.source || "data/gallery.json"))];
+      const catalogs = {};
+      for (const src2 of sources) {
+        const r = await loadJSON(src2);
+        if (!r.data) {
+          status.set("catalog " + src2 + ": " + (r.error || (r.offline ? "not readable from disk" : "missing")), "err", 100);
+          return;
+        }
+        for (const a of normalize2(r.data).albums) catalogs[a.id] = a;
+      }
+      status.set("validating planner\u2026", "info", 65);
+      const draft = store.get(DRAFT_KEY2, null);
+      const raw = JSON.parse(JSON.stringify(planData));
+      const plan = normalizePlan(planData, catalogs);
+      if (draft && Array.isArray(draft.terms)) {
+        const merged = JSON.parse(JSON.stringify(planData));
+        for (const t of merged.terms || []) {
+          const d = draft.terms.find((x) => x.id === t.id);
+          if (d) t.picks = d.picks;
+        }
+        const p2 = normalizePlan(merged, catalogs);
+        plan.terms = p2.terms;
+        plan.warnings = plan.warnings.concat(p2.warnings.filter((w) => !plan.warnings.includes(w)));
+      }
+      plan.raw = raw;
+      st.plan = plan;
+      plan.warnings.forEach((w) => console.warn("[nh planner]", w));
+      if (!plan.terms.length) {
+        status.set("planner.json has no terms", "err", 100);
+        return;
+      }
+      termSel.replaceChildren(...plan.terms.map((t) => h("option", { value: t.id, text: t.title })));
+      termSel.hidden = plan.terms.length < 2;
+      st.term = plan.terms.find((t) => t.id === ui.term) || plan.terms[0];
+      termSel.value = st.term.id;
+      title.textContent = "WEEK \xB7 " + st.term.title.toUpperCase();
+      changed(false);
+      status.set("rendering\u2026", "info", 90);
+      renderAll();
+      status.set(st.term.title + (st.term.dates ? " \xB7 " + st.term.dates : "") + " \xB7 " + st.term.picks.length + " courses" + (origin ? " \xB7 " + origin : "") + (plan.warnings.length ? " \xB7 " + plan.warnings.length + " warning(s), see console" : "") + (st.draft ? " \xB7 local draft applied" : ""), plan.warnings.length ? "warn" : "ok", 100);
+    }
+    termSel.addEventListener("change", () => {
+      st.term = st.plan.terms.find((t) => t.id === termSel.value);
+      st.sel = null;
+      title.textContent = "WEEK \xB7 " + st.term.title.toUpperCase();
+      saveUI();
+      renderAll();
+    });
+    async function load2() {
+      status.set("fetching " + SOURCE4 + "\u2026", "info", 15);
+      const r = await loadJSON(SOURCE4);
+      if (r.data) {
+        boot2(r.data);
+        return;
+      }
+      picker.hidden = false;
+      if (r.offline) status.set("Opened from disk: browsers block reading data/ here. Serve the folder (python -m http.server).", "warn", 100);
+      else status.set(r.missing ? SOURCE4 + " not found" : r.error, "err", 100);
+    }
+    load2();
+    return function destroy() {
+      removeEventListener("keydown", onKey, true);
+      if (ro) ro.disconnect();
+    };
+  }
+
   // js/apps/index.js
-  var REGISTRY = { calendar: calendar_exports, linkdock: linkdock_exports };
+  var REGISTRY = { calendar: calendar_exports, linkdock: linkdock_exports, gallery: gallery_exports, planner: planner_exports };
   var teardown2 = null;
   var has = (id) => Object.prototype.hasOwnProperty.call(REGISTRY, id);
   function open(id, root) {
@@ -3878,7 +4994,9 @@
   }
   var GLYPH = {
     calendar: '<svg class="g" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="12"/><path d="M1.5 6h13M5 1v3M11 1v3M4 9h2M7 9h2M10 9h2M4 12h2M7 12h2"/></svg>',
-    link: '<svg class="g" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M6.5 9.5l3-3M7 4.5l1.6-1.6a2.6 2.6 0 0 1 3.7 3.7L10.7 8.2M9 11.5l-1.6 1.6a2.6 2.6 0 0 1-3.7-3.7L5.3 7.8"/></svg>'
+    link: '<svg class="g" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M6.5 9.5l3-3M7 4.5l1.6-1.6a2.6 2.6 0 0 1 3.7 3.7L10.7 8.2M9 11.5l-1.6 1.6a2.6 2.6 0 0 1-3.7-3.7L5.3 7.8"/></svg>',
+    week: '<svg class="g" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11"/><path d="M1.5 5.5h13M5.5 5.5v8M10.5 5.5v8M3 8h1.5M7 10h2M12 8h1.5"/></svg>',
+    image: '<svg class="g" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11"/><circle cx="5.5" cy="6" r="1.3"/><path d="M1.5 12l4-3.5 3 2.5 2.5-2 3.5 3"/></svg>'
   };
   function init7() {
     stage = $2("#deck-stage");

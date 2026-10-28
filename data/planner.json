@@ -1,0 +1,196 @@
+{
+  "version": 1,
+  "updated": "2026-10-28",
+  "categories": {
+    "take": {
+      "label": "Take",
+      "color": "#4fd6ff"
+    },
+    "sit-in": {
+      "label": "Sit in",
+      "color": "#ffb24a"
+    },
+    "undecided": {
+      "label": "Undecided",
+      "color": "#7d93a3",
+      "dashed": true
+    }
+  },
+  "defaultCategory": "undecided",
+  "terms": [
+    {
+      "id": "spring-2027",
+      "title": "Spring 2027",
+      "dates": "1/13/27 – 5/5/27 (UA) · Pima 01/21 – 05/23",
+      "catalog": {
+        "source": "data/gallery.json",
+        "album": "spring-2027"
+      },
+      "week": {
+        "days": [
+          "Mo",
+          "Tu",
+          "We",
+          "Th",
+          "Fr"
+        ],
+        "start": "08:00",
+        "end": "20:00"
+      },
+      "picks": [
+        {
+          "course": "math-355",
+          "sections": [
+            "001",
+            "002"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "math-424",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "math-464",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "ece-425",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "ece-455",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "ece-555",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "ece-508",
+          "sections": [
+            "201"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "ece-546",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "ece-523",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "chem-182",
+          "sections": [
+            "001",
+            "001A",
+            "001B",
+            "001C",
+            "001F"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "chem-480b",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "chem-485",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "phys-472",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "mse-507",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "phys-560b",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "phys-565",
+          "sections": [
+            "001"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "phys-586",
+          "sections": [
+            "001",
+            "001A"
+          ],
+          "category": "undecided",
+          "note": ""
+        },
+        {
+          "course": "mat-262",
+          "sections": [
+            "22876",
+            "20518",
+            "20586"
+          ],
+          "category": "undecided",
+          "note": ""
+        }
+      ]
+    }
+  ]
+}
